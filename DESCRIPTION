@@ -1,0 +1,34 @@
+Package: hierarchicalSets
+Type: Package
+Title: Set Data Visualization Using Hierarchies
+Version: 0.2.2
+Date: 2015-12-15
+Author: Thomas Lin Pedersen
+Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
+Description: Pure set data visualization approaches are often limited in
+    scalability due to the combinatorial explosion of distinct set families as
+    the number of sets under investigation increases. hierarchicalSets applies
+    a set centric hierarchical clustering of the sets under investigation and
+    uses this hierarchy as a basis for a range of scalable visual
+    representations. hierarchicalSets is especially well suited for collections
+    of sets that describe comparable comparable entities as it relies on the
+    sets to have a meaningful relational structure.
+License: GPL (>=2)
+LazyData: TRUE
+Imports:
+    ggdendro,
+    ggplot2 (>=2.0.0),
+    stats,
+    Rcpp,
+    scales,
+    Matrix,
+    MASS,
+    RColorBrewer
+RoxygenNote: 5.0.1
+Collate:
+    'RcppExports.R'
+    'hSet.R'
+    'hierarchicalSet.R'
+    'hierarchicalSets-package.R'
+    'visuals.R'
+LinkingTo: Rcpp
