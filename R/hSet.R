@@ -40,6 +40,45 @@ hSet <- function(sets, intersectLimit = 1) {
     res
 }
 
+#' Create a new hierarchy based on the outlying elements
+#'
+#' This function detects the outlying elements of a HierarchicalSet object and
+#' creates a new clustering of the sets only based on these elements. The
+#' returned HierarchicalSet object will only contain the outlying elements, thus
+#' reducing the universe size. This operation is somewhat similar to principal
+#' component analysis, in that the derived clustering is based on the structure
+#' not captured by the first clustering, thus modeling the second most dominant
+#' feature of the data.
+#'
+#' @param set A HierarchicalSet object
+#'
+#' @param intersectLimit The proportion of sets an element must be present in to
+#' be considered part of the intersect. Standard intersects require it to be
+#' present in all sets (intersectLimit = 1), which is also the default
+#'
+#' @return An object of class HierarchicalSet, based on the outliying elements
+#' of \code{set}
+#'
+#' @seealso \code{\link{outlying_elements}} for extracting outlying element
+#' information from a HierarchicalSet object
+#'
+#' @export
+#'
+#' @examples
+#' data('twitter')
+#'
+#' twitSet <- create_hierarchy(twitter)
+#' twitSetOut <- outlier_hierarchy(twitSet)
+#' twitSetOut
+#'
+outlier_hierarchy <- function(set, intersectLimit = 1) {
+    outliers <- outlying_elements(set, FALSE)$outliers
+    outliers <- unique(unlist(outliers))
+    if (length(outliers) == 0) {
+        stop('No outlying elements in set')
+    }
+    create_hierarchy(sets(set)[outliers, ], intersectLimit)
+}
 # HELPERS
 #' Parse different set formats into ngCMatrix format
 #'
