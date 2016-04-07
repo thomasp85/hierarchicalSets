@@ -81,17 +81,17 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
                                    match.arg, choices = c(types, 'bar'))
     }
     if (type %in% c('dendrogram', 'composite')) {
-        denData <- createDendroData(x$clusters)
+        denData <- createDendroData(clusters(x))
     }
     if (type %in% c('intersectStack', 'composite')) {
-        iceData <- createIcicleData(x$clusters)
+        iceData <- createIcicleData(clusters(x))
     }
     if (type %in% c('heatmap', 'composite')) {
         heatData <- createHeatData(x)
     }
     if (type %in% c('composite')) {
-        barData <- createBarData(x$sets[,match(denData$labels$label,
-                                               colnames(x$sets))])
+        barData <- createBarData(sets(x)[,match(denData$labels$label,
+                                                set_names(x))])
     }
     if (type %in% c('outlyingElements')) {
         outData <- createOutlierData(x, quantiles = quantiles,
@@ -735,11 +735,11 @@ createIcicleData <- function(trees) {
         labels = do.call(rbind, lapply(plotData, `[[`, 'labels'))
     )
 }
-createHeatData <- function(object) {
-    denData <- createDendrogramixData(object$clusters)
-    denData$circles <- pairSummary(object$sets@p, object$sets@i,
+createHeatData <- function(x) {
+    denData <- createDendrogramixData(clusters(x))
+    denData$circles <- pairSummary(sets(x)@p, sets(x)@i,
                                    match(denData$labels$label,
-                                         colnames(object$sets)))
+                                         set_names(x)))
     denData
 }
 #' @importFrom Matrix rowSums
@@ -763,14 +763,14 @@ createOutlierData <- function(x, quantiles, tension, circular,
         out$group[out$nOutliers >= splits[i]] <- names(splits)[i]
     }
     out <- out[!is.na(out$group),]
-    bundles <- createBundles(object$clusters, out[, 1:2], tension = tension,
+    bundles <- createBundles(clusters(x), out[, 1:2], tension = tension,
                              circular = circular)
     bundles$nOutliers <- out$nOutliers[bundles$id]
     bundles$group <- factor(out$group[bundles$id], levels = names(splits))
     if (evenHierarchy) {
-        object$clusters <- lapply(object$clusters, layoutSpread)
+        x$clusters <- lapply(clusters(x), layoutSpread)
     }
-    dendro <- createDendroData(object$clusters,
+    dendro <- createDendroData(clusters(x),
                                type = if (circular) 'triangle' else 'rectangle')
     if (circular) {
         yRange <- range(c(dendro$segments$y, dendro$segments$yend))
