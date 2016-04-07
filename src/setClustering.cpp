@@ -102,7 +102,7 @@ List createTree(std::map<int, Cluster>& nodes, int key, CharacterVector& setName
         stop("Missing key in nodes");
     }
     if (it->second.leaf){
-        tree = List::create();
+        tree = List::create(wrap(it->second.members[0] + 1));
         label = setNames[it->second.members[0]];
         tree.attr("label") = label;
     } else {
