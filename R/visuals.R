@@ -56,7 +56,7 @@ NULL
 #'
 #' @export
 #'
-plot.hierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
+plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
                                  transform=NULL, style=theme_bw(),
                                  quantiles = 0, tension = 0.8, circular = TRUE,
                                  showHierarchy = !circular,

@@ -16,7 +16,7 @@
 #' be considered part of the intersect. Standard intersects require it to be
 #' present in all sets (intersectLimit = 1), which is also the default
 #'
-#' @return An object of class hierarchicalSet
+#' @return An object of class HierarchicalSet
 #'
 #' @details
 #' The hierarchicalSet class contains both the clustering and the original sets.
@@ -27,7 +27,7 @@
 #' clusters exists the object can be subsetted using the \code{[} operator.
 #'
 #' For plotting functionality see the separate plot documentation for
-#' \code{\link{plot.hierarchicalSet}}.
+#' \code{\link{plot.HierarchicalSet}}.
 #'
 #' @export
 #'
@@ -36,7 +36,7 @@ hSet <- function(sets, intersectLimit = 1) {
     sets <- format_sets(sets)
     clusters <- setClustering(sets@p, sets@i, colnames(sets), intersectLimit)
     res <- list(sets = sets, clusters = clusters)
-    class(res) <- 'hierarchicalSet'
+    class(res) <- 'HierarchicalSet'
     res
 }
 

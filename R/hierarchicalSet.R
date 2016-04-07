@@ -7,7 +7,6 @@ NULL
 #'
 #' @export
 #'
-print.hierarchicalSet <- function(x, ...) {
     cat('A hierarchicalSet object\n\n')
     cat('                 Universe size: ', nrow(x$sets), '\n', sep = '')
     cat('                Number of sets: ', length(x), '\n', sep = '')
@@ -19,6 +18,7 @@ print.hierarchicalSet <- function(x, ...) {
 #'
 length.hierarchicalSet <- function(x) {
     ncol(x$sets)
+print.HierarchicalSet <- function(x, ...) {
 }
 #' @describeIn hSet Extract dendrogram objects from hierarchicalSet objects
 #'
@@ -26,8 +26,8 @@ length.hierarchicalSet <- function(x) {
 #'
 #' @export
 #'
-`[[.hierarchicalSet` <- function(x, i) {
     x$clusters[[i]]
+`[[.HierarchicalSet` <- function(x, i) {
 }
 #' @describeIn hSet Subset hierarchicalSet object by dendrogram (preserving set
 #' information and class)
@@ -36,12 +36,12 @@ length.hierarchicalSet <- function(x) {
 #'
 #' @export
 #'
-`[.hierarchicalSet` <- function(x, i) {
     clusters <- x$clusters[i]
     includedSets <- sort(unlist(lapply(clusters, attr, 'memberSets')))
     sets <- x$sets[, includedSets, drop = FALSE]
     sets <- sets[rowSums(sets) != 0, , drop = FALSE]
     clusters <- lapply(clusters, function(den) {
+`[.HierarchicalSet` <- function(x, i) {
         dendrapply(den, function(node) {
             attr(node, 'memberSets') <- match(attr(node, 'memberSets'), includedSets)
             node

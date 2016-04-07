@@ -12,8 +12,8 @@
 #' intersectionStack plot is a scalable pendant to Venn diagrams (showing the
 #' same information but using a different visual mapping).
 #'
-#' @seealso \code{\link{hSet}} For constructing hierarchicalSet object and
-#' \code{\link{plot.hierarchicalSet}} for visualization apporaches.
+#' @seealso \code{\link{create_hierarchy}} For constructing hierarchicalSet
+#' object and \code{\link{plot.HierarchicalSet}} for visualization apporaches.
 #'
 #' @docType package
 #'
