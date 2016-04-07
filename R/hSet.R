@@ -33,6 +33,7 @@
 #'
 hSet <- function(sets, intersectLimit = 1) {
     sets <- formatSets(sets)
+    sets <- format_sets(sets)
     clusters <- setClustering(sets@p, sets@i, colnames(sets), intersectLimit)
     res <- list(sets = sets, clusters = clusters)
     class(res) <- 'hierarchicalSet'
@@ -40,71 +41,87 @@ hSet <- function(sets, intersectLimit = 1) {
 }
 
 # HELPERS
-#' Format and check sets
+#' Parse different set formats into ngCMatrix format
 #'
 #' This function is intended to ensure proper formatting of the supplied sets to
-#' the hSet constructor. The output will be a matrix of integers containing only
-#' 0's and 1's, with named columns. If unable to parse the input an error will
-#' be thrown. Acceptable input are matrices, data.frames and list of vectors.
+#' the \code{\link{create_hierarchy}} constructor. Support for other input
+#' objects can be created by writting a format_sets method for the class.
 #'
-#' @param sets The sets to be formatted
+#' @param x The sets to be formatted
 #'
-#' @return A presence/absence matrix with sets as columns and elements as rows
+#' @return A presence/absence matrix with sets as columns and elements as rows,
+#' formatted as a ngCMatrix
 #'
+#' @export
+#'
+#' @keywords internal
+#'
+#' @examples
+#' data('twitter')
+#' format_sets(as.matrix(twitter))
+#'
+format_sets <- function(x) UseMethod('format_sets')
+#' @export
+#'
+format_sets.data.frame <- function(x) {
+    format_sets(as.matrix(x))
+}
+#' @export
+#'
+format_sets.list <- function(x) {
+    class <- unique(sapply(x, class))
+    if (length(class) != 1) {
+        stop('All elements of list "sets" must be of the same class')
+    }
+    if (!class %in% c('integer', 'factor', 'character', 'numeric')) {
+        stop('Invalid "sets" element class')
+    }
+    if (any(unlist(lapply(x, is.na)))) {
+        warning('NA values ignored')
+    }
+    if (class == 'factor') {
+        x <- lapply(x, as.character)
+    }
+    if (class == 'numeric') {
+        warning('numeric coerced to integer')
+        x <- lapply(x, as.integer)
+    }
+    universe <- unique(unlist(x))
+    x <- lapply(x, function(set) {
+        universe %in% set
+    })
+    setNames <- names(x)
+    sets <- do.call(cbind, sets)
+    colnames(x) <- setNames
+    rownames(x) <- universe
+    format_sets(x)
+}
 #' @importFrom Matrix Matrix
-#' @noRd
 #'
-formatSets <- function(sets) {
-    if (inherits(sets, 'data.frame')) {
-        sets <- as.matrix(sets)
+#' @export
+#'
+format_sets.matrix <- function(x) {
+    mode(x) <- 'integer'
+    naValues <- is.na(x)
+    if (any(naValues)) {
+        warning('NA values set to 0')
+        x[naValues] <- 0
     }
-    if (inherits(sets, 'list')) {
-        class <- unique(sapply(sets, class))
-        if (length(class) != 1) {
-            stop('All elements of list "sets" must be of the same class')
-        }
-        if (!class %in% c('integer', 'factor', 'character', 'numeric')) {
-            stop('Invalid "sets" element class')
-        }
-        if (any(unlist(lapply(sets, is.na)))) {
-            warning('NA values ignored')
-        }
-        if (class == 'factor') {
-            sets <- lapply(sets, as.character)
-        }
-        if (class == 'numeric') {
-            warning('numeric coerced to integer')
-            sets <- lapply(sets, as.integer)
-        }
-        universe <- unique(unlist(sets))
-        sets <- lapply(sets, function(x) {
-            universe %in% x
-        })
-        setNames <- names(sets)
-        sets <- do.call(cbind, sets)
-        colnames(sets) <- setNames
-        rownames(sets) <- universe
+    highValues <- x > 1
+    if (any(highValues)) {
+        warning('Values above 1 set to 1')
+        x[highValues] <- 1
     }
-    if (inherits(sets, 'matrix')) {
-        mode(sets) <- 'integer'
-        naValues <- is.na(sets)
-        if (any(naValues)) {
-            warning('NA values set to 0')
-            sets[naValues] <- 0
-        }
-        highValues <- sets > 1
-        if (any(highValues)) {
-            warning('Values above 1 set to 1')
-            sets[highValues] <- 1
-        }
-        if (is.null(colnames(sets))) {
-            colnames(sets) <- paste('Set ', seq_len(ncol(sets)))
-        }
-        sets <- as(Matrix(sets, sparse = TRUE), 'ngCMatrix')
-    } else if (inherits(sets, 'Matrix')) {
-        sets <- as(sets, 'ngCMatrix')
-    } else {
-        stop('sets must be in either matrix, data.frame or list format')
+    if (is.null(colnames(x))) {
+        colnames(x) <- paste0('Set ', seq_len(ncol(x)))
     }
-    sets
+    as(Matrix(x, sparse = TRUE), 'ngCMatrix')
+}
+#' @export
+#'
+format_sets.Matrix <- function(x) {
+    if (is.null(colnames(x))) {
+        colnames(x) <- paste0('Set ', seq_len(ncol(x)))
+    }
+    as(x, 'ngCMatrix')
 }
