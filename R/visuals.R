@@ -17,10 +17,36 @@ NULL
 #' @param type The type of plot to produce. See detail. The name of the type may
 #' be abbreviated.
 #'
+#' @param transform A string giving the scale transformation or a
+#' \code{\link[scales]{trans}} object.
+#'
 #' @param style A ggplot2 theme to use as basis for the plot. Defaults to
 #' theme_bw().
 #'
-#' @param ... Parameters passed on to the outlyingElements function
+#' @param quantiles The quantiles to split outlying elements up in for
+#' outlying_elements plot. If length is above one a facetted plot will be
+#' produced.
+#'
+#' @param upperBound The upper quantile threshold to include. Defaults to 1
+#' (i.e. everything is included)
+#'
+#' @param tension The tension used for the hierarchical edge bundles in
+#' outlying_elements plot. Defaults to 0.8
+#'
+#' @param alpha The alpha level for the edge bundles. Defaults to 1
+#'
+#' @param circular Logical. Should the hierarchical edge bundles be laid out in
+#' a circular layout.
+#'
+#' @param showHierarchy Logical. For intersectionStack plots, should a
+#' dendrogram mapping union sizes be drawn above the icicle plot. For
+#' outlying_elements plots should a dendrogram be plotted below (for circular) or
+#' to the left (for linear) of the edge bundles.
+#'
+#' @param evenHierarchy Logical. Should the heights of the dendrogram used for
+#' constructing the edge bundles be evened out.
+#'
+#' @param ... Currently ignored
 #'
 #' @return A gtable object invisibly. This function is mainly called for the
 #' side effect of creating a plot.
@@ -239,6 +265,8 @@ outlying_elements <- function(x, counts = TRUE) {
 #' @return A gtable object ready to draw
 #'
 #' @importFrom grid nullGrob
+#'
+#' @noRd
 #'
 createDenTable <- function(data, style, label = TRUE, transform = NULL) {
     p <- ggplot()
@@ -1109,6 +1137,15 @@ transReverser <- function(name) {
         domain = transformOrig$domain
     )
 }
+#' Create a power transformation object
+#'
+#' This function can be used to create a proper trans object that encapsulates
+#' a power transformation (x^n).
+#'
+#' @param n The degree of the power transformation
+#'
+#' @return A trans object
+#'
 #' @importFrom scales trans_new extended_breaks format_format
 #' @importFrom MASS fractions
 #'
