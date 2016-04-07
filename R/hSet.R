@@ -29,17 +29,42 @@
 #' For plotting functionality see the separate plot documentation for
 #' \code{\link{plot.HierarchicalSet}}.
 #'
+#' @aliases HierarchicalSet
+#'
 #' @export
 #'
-hSet <- function(sets, intersectLimit = 1) {
-    sets <- formatSets(sets)
+#' @examples
+#' data('twitter')
+#'
+#' # Caclulate the clustering
+#' twitSet <- create_hierarchy(twitter)
+#'
+#' # Some statistics on the data
+#' n_sets(twitSet)
+#' n_elements(twitSet)
+#' n_clusters(twitSet)
+#'
+#' # Focus on the first two independent cluster
+#' twitSet[1:2]
+#'
+#' # Extract a dendrogram representation of the firrst cluster
+#' twitSet[[1]]
+#'
+create_hierarchy <- function(sets, intersectLimit = 1) {
     sets <- format_sets(sets)
     clusters <- setClustering(sets@p, sets@i, colnames(sets), intersectLimit)
+    clusters <- lapply(clusters, dendrapply, function(x) {
+        if (is.leaf(x)) {
+            leafAttr <- attributes(x)
+            x <- as.integer(x)
+            attributes(x) <- leafAttr
+        }
+        x
+    })
     res <- list(sets = sets, clusters = clusters)
     class(res) <- 'HierarchicalSet'
     res
 }
-
 #' Create a new hierarchy based on the outlying elements
 #'
 #' This function detects the outlying elements of a HierarchicalSet object and
