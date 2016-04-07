@@ -119,6 +119,48 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
     grid.draw(p)
     invisible(p)
 }
+#' Plot the outlying elements of a HierarchicalSet object
+#'
+#' This function creates a scatter plot showing each outlying element as a
+#' function of the number of sets it is present in and the number of times it
+#' is outlying.
+#'
+#' @param x A HierarchicalSet object
+#'
+#' @param alpha The transparancy of the dots
+#'
+#' @return This function is called for its side effects
+#'
+#' @seealso \code{\link{outlying_elements}} for extracting outlying element
+#' information from a HierarchicalSet object
+#'
+#' @importFrom Matrix rowSums
+#'
+#' @export
+#'
+#' @examples
+#' data('twitter')
+#'
+#' twitSet <- create_hierarchy(twitter)
+#' plot_outlier_distribution(twitSet)
+#'
+plot_outlier_distribution <- function(x, alpha = 0.3) {
+    if (!inherits(x, 'HierarchicalSet')) {
+        stop('plotOutDist only supports HierarchicalSet objects')
+    }
+    out <- table(unlist(outlying_elements(x, FALSE)$outliers))
+    out <- data.frame(
+        element = as.integer(names(out)),
+        nOutlier = as.integer(out),
+        nSets = rowSums(sets(x))[as.integer(names(out))]
+    )
+    ggplot() +
+        geom_point(aes_(x = ~nSets, y = ~nOutlier), data = out, alpha = alpha) +
+        ggtitle(paste0(nrow(out), ' outlying elements out of ', n_elements(x))) +
+        xlab('# of sets with element') +
+        ylab('# of times element is outlier') +
+        theme_bw()
+}
 #' Extract the outlying elements from each set pair
 #'
 #' This function detects the outlying elements of each pair of sets in a
