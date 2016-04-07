@@ -61,6 +61,7 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
                                  quantiles = 0, upperBound = 1, tension = 0.8,
                                  alpha = 1, circular = TRUE,
                                  showHierarchy = !circular,
+                                 evenHierarchy = circular, ...) {
     types <- c(
         'dendrogram',
         'intersectStack',
@@ -113,7 +114,7 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
             style = style, label = label, transform = transform
         ),
         outlyingElements = createOutlierTable(outData, style, label, circular,
-                                              showHierarchy),
+                                              showHierarchy, alpha),
         stop('Unknown plot type')
     )
     grid.newpage()
@@ -262,11 +263,12 @@ createDenTable <- function(data, style, label = TRUE, transform = NULL) {
     p <- p + xlab(expression(paste(lambda, "'") ~~ italic("heterogeneity")))
     p <- p + scale_x_continuous(trans = transReverser(transform),
                                 expand = c(0, 0))
+    p <- p + expand_limits(x = c(0, max(data$segments$y)*1.025))
     p <- p + scale_y_continuous(breaks = data$labels$x,
                                 labels = data$labels$label, expand = c(0,0.5),
                                 limits = c(1, max(data$labels$x)))
-    p <- p + geom_segment(aes(y = x, x = y, yend = xend, xend = yend),
-                          data = data$segments)
+    p <- p + geom_segment(aes_(y = ~x, x = ~y, yend = ~xend, xend = ~yend),
+                          data = data$segments, lineend = 'round')
     pBuild <- ggplot_build(p)
     yaxisGrob <- ggplot2:::guide_axis(at = pBuild$panel$ranges[[1]]$y.major,
                                       data$labels$label, 'right', p$theme)
@@ -298,8 +300,12 @@ createDenTable <- function(data, style, label = TRUE, transform = NULL) {
 #'
 #' @importFrom RColorBrewer brewer.pal
 #'
+#' @noRd
+#'
 createIceTable <- function(data, style, label = TRUE, yaxis = 'left',
                            transform = NULL, showHierarchy = FALSE) {
+    data$segments$type <- factor('Union', levels = c('Union', 'Intersection'))
+    data$rectangles$type <- factor('Intersection', levels = c('Union', 'Intersection'))
     p <- ggplot() + style + theme(
         axis.title.x = element_blank(),
         axis.text.x = element_text(
@@ -311,7 +317,7 @@ createIceTable <- function(data, style, label = TRUE, yaxis = 'left',
         panel.border = element_blank(),
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
-        axis.title.y = element_text(angle = 0),
+        axis.title.y = element_text(angle = if (showHierarchy) 90 else 0),
         axis.text.y = element_text(hjust = if (yaxis == 'left') 1 else 0)
     )
     if (!label) {
@@ -326,17 +332,22 @@ createIceTable <- function(data, style, label = TRUE, yaxis = 'left',
     tops <- data$rectangles[data$rectangles$degree == 1, ]
     xLoc <- (tops$xmin + tops$xmax) / 2
     tops <- data.frame(x = xLoc, xend = xLoc, y = tops$ymax,
-                       yend = max(tops$ymax))
+                       yend = max(tops$ymax),
+                       type = factor('Intersection', levels = c(
+                           'Union', 'Intersection'
+                       )))
 
     if (showHierarchy) {
-        p <- p + geom_segment(aes(x = x, xend = xend, y = y, yend = yend),
-                              data = data$segments)
-    } else {
-        p <- p + geom_segment(aes(x = x, xend = xend, y = y, yend = yend),
-                              data = tops, color = 'lightgrey')
+        p <- p + geom_segment(aes_(x = ~x, xend = ~xend, y = ~y,
+                                   yend = ~yend),
+                              data = data$segments, lineend = 'round')
+        p <- p + facet_grid(type~., scales = 'free_y')
     }
-    p <- p + geom_rect(aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax,
-                           fill = degree),
+    p <- p + geom_segment(aes_(x = ~x, xend = ~xend, y = ~y,
+                               yend = ~yend),
+                          data = tops, color = 'lightgrey')
+    p <- p + geom_rect(aes_(xmin = ~xmin, xmax = ~xmax, ymin = ~ymin,
+                            ymax = ~ymax, fill = ~degree),
                        data = data$rectangles, color = I('white'))
     p <- p + scale_y_continuous(trans = transform, expand = c(0, 0))
     p <- p + scale_x_continuous(expand = c(0, 0), breaks = data$labels$x,
@@ -348,7 +359,11 @@ createIceTable <- function(data, style, label = TRUE, yaxis = 'left',
         breaks = axisTicks(log10(range(data$rectangles$degree)), log = TRUE),
         guide = guide_colorbar(override.aes = list(size = 0))
     )
-    p <- p + ylab(expression(group('|', intersect(), '|')))
+    if (showHierarchy) {
+        p <- p + ylab('Size')
+    } else {
+        p <- p + ylab(expression(group('|', intersect(), '|')))
+    }
 
     pBuild <- ggplot_build(p)
     yaxisGrob <- ggplot2:::guide_axis(at = pBuild$panel$ranges[[1]]$y.major,
@@ -402,15 +417,15 @@ createHeatTable <- function(data, style, label = TRUE, transform = NULL) {
     pal <- unionScale$palette(unionScale$rescaler(val))
     data$circles$unionCol <- pal[match(data$circles$union, val)]
 
-    p <- p + geom_polygon(aes(x = x, y = y, group = group), data = data$path,
-                          fill = I(data$path$intersectCol))
-    p <- p + geom_rect(aes(xmin = x - 0.25, xmax = x + 0.25, ymin = y - 0.25,
-                           ymax = y + 0.25),
+    p <- p + geom_polygon(aes_(x = ~x, y = ~y, group = ~group),
+                          data = data$path, fill = I(data$path$intersectCol))
+    p <- p + geom_rect(aes_(xmin = ~x - 0.25, xmax = ~x + 0.25,
+                           ymin = ~y - 0.25, ymax = ~y + 0.25),
                        data = data$circles, fill = I(data$circles$intersectCol))
-    p <- p + geom_rect(aes(xmin = y - 0.5, xmax = y + 0.5, ymin = x - 0.5,
-                           ymax = x + 0.5),
+    p <- p + geom_rect(aes_(xmin = ~y - 0.5, xmax = ~y + 0.5, ymin = ~x - 0.5,
+                           ymax = ~x + 0.5),
                        data = data$circles, fill = I(data$circles$unionCol))
-    p <- p + geom_path(aes(x = y, y = x, group = group), data = data$path,
+    p <- p + geom_path(aes_(x = ~y, y = ~x, group = ~group), data = data$path,
                        color = I('white'))
     p <- p + scale_x_continuous(expand = c(0, 0), breaks = data$labels$x,
                                 labels = data$labels$label)
@@ -456,7 +471,7 @@ createBarTable <- function(data, style, label = TRUE, yaxis = 'left',
     if (is.null(transform)) {
         transform <- 'identity'
     }
-    p <- p + geom_bar(aes(x = x, y = y), data = data, stat = 'identity')
+    p <- p + geom_bar(aes_(x = ~x, y = ~y), data = data, stat = 'identity')
     p <- p + ylab('# unique')
     p <- p + scale_y_continuous(trans = transform, expand = c(0, 0))
     p <- p + scale_x_continuous(expand = c(0, 0), breaks = data$x,
@@ -561,7 +576,7 @@ createCompositeTable <- function(den, ice, heat, bar, style, label, transform) {
 }
 #' @importFrom gtable gtable_add_rows gtable_add_cols
 #' @importFrom RColorBrewer brewer.pal
-createOutlierTable <- function(data, style, label, circular, showHierarchy) {
+createOutlierTable <- function(data, style, label, circular, showHierarchy, alpha) {
     if (circular) {
         nPanels <- length(levels(data$bundles$group))
         p <- ggplot() + style + theme(
@@ -570,8 +585,9 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy) {
             axis.title = element_blank(),
             panel.grid = element_blank()
         )
-        p <- p + geom_path(aes(x = x, y = y, group = id, color = nOutliers),
-                           alpha = I(0.25), data = data$bundles)
+        p <- p + geom_path(aes_(x = ~x, y = ~y, group = ~id,
+                                color = ~nOutliers),
+                           alpha = alpha, data = data$bundles)
         if (label) {
             data$labels$hjust <- ifelse(data$labels$x > 0, 0, 1)
             data$labels$vjust <- 0.5
@@ -589,9 +605,9 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy) {
             p <- p + facet_wrap(~group, ncol=nColumns)
         } else if (label) {
             nColumns <- 1
-            p  <- p + geom_text(aes(x = x*1.05, y = y*1.05, hjust = hjust,
-                                    vjust = vjust, angle = angle,
-                                    label = label),
+            p  <- p + geom_text(aes_(x = ~x*1.05, y = ~y*1.05, hjust = ~hjust,
+                                    vjust = ~vjust, angle = ~angle,
+                                    label = ~label),
                                 data = data$labels,
                                 size = getAxisTextSize(style)*5/14)
             maxLength <- nchar(as.character(data$labels$label))
@@ -613,13 +629,13 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy) {
                 panel.grid = element_blank(),
                 panel.border = element_blank()
             )
-            denP <- denP + geom_segment(aes(x = x, y = y, xend = xend,
-                                            yend = yend),
-                                        data = data$segments)
+            denP <- denP + geom_segment(aes_(x = ~x, y = ~y, xend = ~xend,
+                                            yend = ~yend),
+                                        data = data$segments, lineend = 'round')
             if (label) {
-                denP <- denP + geom_text(aes(x = x*1.05, y = y*1.05,
-                                             hjust = hjust, vjust = vjust,
-                                             angle = angle, label = label),
+                denP <- denP + geom_text(aes_(x = ~x*1.05, y = ~y*1.05,
+                                             hjust = ~hjust, vjust = ~vjust,
+                                             angle = ~angle, label = ~label),
                                          data = data$labels,
                                          size = getAxisTextSize(style)*5/14)
                 maxLength <- nchar(as.character(data$labels$label))
@@ -643,7 +659,8 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy) {
             axis.text.y = element_text(hjust = if (showHierarchy) 0.5 else 1),
             axis.ticks.y = element_blank()
         )
-        p <- p + geom_path(aes(x = y, y = x, group = id, color = nOutliers),
+        p <- p + geom_path(aes_(x = ~y, y = ~x, group = ~id,
+                                color = ~nOutliers),
                            alpha = I(0.25), data = data$bundles)
         if (!label) {
             p <- p + theme(
@@ -651,7 +668,8 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy) {
             )
         }
         p <- p + scale_y_continuous(breaks = data$labels$x,
-                                    labels = data$labels$label)
+                                    labels = data$labels$label,
+                                    limits = range(data$labels$x))
         p <- p + scale_x_continuous(expand = c(0, 0))
         p <- p + expand_limits(x = c(0, max(data$bundles$y)*1.025))
         p <- p + scale_color_gradientn(
@@ -667,10 +685,14 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy) {
                 panel.grid = element_blank(),
                 panel.border = element_blank()
             )
-            denP <- denP + geom_segment(aes(x = y, y = x, xend = yend,
-                                            yend = xend),
-                                        data = data$segments)
-            denP <- denP + scale_x_reverse(expand = c(0, 0))
+            denP <- denP + geom_segment(aes_(x = ~y, y = ~x, xend = ~yend,
+                                            yend = ~xend),
+                                        data = data$segments, lineend = 'round')
+            denP <- denP + scale_y_continuous(breaks = data$labels$x,
+                                        labels = data$labels$label,
+                                        limits = range(data$labels$x))
+            denP <- denP + scale_x_reverse(expand = c(0.025, 0))
+            denP <- denP + expand_limits(x = c(0, max(data$segments$y)*1.025))
             denP <- ggplotGrob(denP)
             p <- gtable_add_cols(p, widths = unit(1, 'null'), 1)
             p <- gtable_add_grob(p, denP$grobs[[4]], t = 3, l = 2, clip = 'off')
