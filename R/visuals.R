@@ -119,6 +119,68 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
     grid.draw(p)
     invisible(p)
 }
+#' Extract the outlying elements from each set pair
+#'
+#' This function detects the outlying elements of each pair of sets in a
+#' HierarchicalSet object. An outlying element is defined as an element in the
+#' intersection of the two sets, but not in the intersection of their nearest
+#' common set family in the hierarchy.
+#'
+#' @param x A HierarchicalSet object
+#'
+#' @param counts Should number of elements rather than the actual elements be
+#' returned. Defaults to \code{TRUE}
+#'
+#' @return A data.frame containing information on the outlying elements of each
+#' set pair. Only pairs with outlying elements are returned. The 'setX' coloumn
+#' contains the index of the first set in the pair and the 'setY' column
+#' contains the index of the second set in the pair. If \code{counts = TRUE}
+#' then the 'nOutliers' column contains the number of outlying elements for each
+#' pair. If \code{counts = FALSE} the the 'outlier' column contains the index of
+#' the outlying elements for each pair
+#'
+#' @seealso \code{\link{plot_outlier_distribution}} for plotting the
+#' distribution  of outlying elements in a HierarchicalSet object
+#'
+#' @export
+#'
+#' @examples
+#' data('twitter')
+#'
+#' twitSet <- create_hierarchy(twitter)
+#'
+#' # Just get the counts
+#' countOut <- outlying_elements(twitSet)
+#' head(countOut)
+#'
+#' # Or the actual elements
+#' elemOut <- outlying_elements(twitSet, FALSE)
+#' head(elemOut)
+#'
+outlying_elements <- function(x, counts = TRUE) {
+    newClusters <- lapply(clusters(x), dendrapply, function(x) {
+        if (is.leaf(x)) {
+            leafAttr <- attributes(x)
+            x <- as.list(x)
+            attributes(x) <- leafAttr
+        }
+        x
+    })
+    outliers <- getOutliers(newClusters, x$sets@p, x$sets@i, counts)
+    if (counts) {
+        data.frame(
+            setX = outliers$from,
+            setY = outliers$to,
+            nOutliers = unlist(outliers$outliers)
+        )
+    } else {
+        data.frame(
+            setX = outliers$from,
+            setY = outliers$to,
+            outliers = I(outliers$outliers)
+        )
+    }
+}
 ## HELPERS
 #' Based on createDenData create a gtable
 #'
@@ -650,9 +712,9 @@ createBarData <- function(sets) {
         label = colnames(sets)
     )
 }
-createOutlierData <- function(object, quantiles, tension, circular,
-                              evenHierarchy = TRUE) {
-    out <- outlyingElements(object)
+createOutlierData <- function(x, quantiles, tension, circular,
+                              evenHierarchy = TRUE, upperBound = 1) {
+    out <- outlying_elements(x)
     splits <- quantile(out$nOutliers, quantiles)
     out$group <- NA
     for (i in seq_along(splits)) {
@@ -785,22 +847,6 @@ dendrogramix_data <- function(dendrogram, left = 1) {
         list(
             path = rbind(data3, data1$path, data2$path),
             labels = rbind(data1$labels, data2$labels)
-        )
-    }
-}
-outlyingElements <- function(x, counts = TRUE) {
-    outliers <- getOutliers(x$clusters, x$sets@p, x$sets@i, counts)
-    if (counts) {
-        data.frame(
-            setX = outliers$from,
-            setY = outliers$to,
-            nOutliers = unlist(outliers$outliers)
-        )
-    } else {
-        data.frame(
-            setX = outliers$from,
-            setY = outliers$to,
-            outliers = I(outliers$outliers)
         )
     }
 }
