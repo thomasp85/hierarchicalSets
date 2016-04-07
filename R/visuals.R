@@ -58,9 +58,9 @@ NULL
 #'
 plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
                                  transform=NULL, style=theme_bw(),
-                                 quantiles = 0, tension = 0.8, circular = TRUE,
+                                 quantiles = 0, upperBound = 1, tension = 0.8,
+                                 alpha = 1, circular = TRUE,
                                  showHierarchy = !circular,
-                                 evenHierarchy = circular) {
     types <- c(
         'dendrogram',
         'intersectStack',
@@ -96,7 +96,8 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
     if (type %in% c('outlyingElements')) {
         outData <- createOutlierData(x, quantiles = quantiles,
                                      tension = tension, circular = circular,
-                                     evenHierarchy = evenHierarchy)
+                                     evenHierarchy = evenHierarchy,
+                                     upperBound = upperBound)
     }
     p <- switch(
         type,
@@ -762,6 +763,7 @@ createOutlierData <- function(x, quantiles, tension, circular,
     for (i in seq_along(splits)) {
         out$group[out$nOutliers >= splits[i]] <- names(splits)[i]
     }
+    out$group[out$nOutliers > quantile(out$nOutliers, upperBound)] <- NA
     out <- out[!is.na(out$group),]
     bundles <- createBundles(clusters(x), out[, 1:2], tension = tension,
                              circular = circular)
