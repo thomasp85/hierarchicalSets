@@ -212,6 +212,8 @@ plot_outlier_distribution <- function(x, alpha = 0.3) {
 #' @seealso \code{\link{plot_outlier_distribution}} for plotting the
 #' distribution  of outlying elements in a HierarchicalSet object
 #'
+#' @importFrom stats is.leaf
+#'
 #' @export
 #'
 #' @examples
@@ -327,6 +329,7 @@ createDenTable <- function(data, style, label = TRUE, transform = NULL) {
 #' @return A gtable object ready to draw
 #'
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom grDevices axisTicks
 #'
 #' @noRd
 #'
@@ -805,6 +808,7 @@ createBarData <- function(sets) {
         label = colnames(sets)
     )
 }
+#' @importFrom stats quantile
 createOutlierData <- function(x, quantiles, tension, circular,
                               evenHierarchy = TRUE, upperBound = 1) {
     out <- outlying_elements(x)
@@ -874,6 +878,7 @@ createDendrogramixData <- function(trees) {
     }, d = plotData$path))
     plotData
 }
+#' @importFrom stats is.leaf
 dendro_data <- function(dendrogram, type) {
     if (is.leaf(dendrogram)) {
         list(
@@ -885,6 +890,9 @@ dendro_data <- function(dendrogram, type) {
         ggdendro::dendro_data(dendrogram, type = type)
     }
 }
+#' @importFrom stats is.leaf
+#' @importFrom utils tail
+#'
 icicle_data <- function(dendrogram, base = 0, left = 1) {
     height <- attr(dendrogram, 'height')
     degree <- attr(dendrogram, 'members')
@@ -915,6 +923,7 @@ icicle_data <- function(dendrogram, base = 0, left = 1) {
         )
     }
 }
+#' @importFrom stats is.leaf
 dendrogramix_data <- function(dendrogram, left = 1) {
     intersect <- attr(dendrogram, 'intersect')
     union <- attr(dendrogram, 'union')
@@ -953,6 +962,7 @@ findTopNode <- function(den, i) {
         den
     }
 }
+#' @importFrom stats is.leaf
 addCoord <- function(clusters) {
     setCoord <- function(den, offset) {
         if (is.leaf(den)) {
@@ -970,6 +980,7 @@ addCoord <- function(clusters) {
         setCoord(den, offset)
     }, den = clusters, offset = offsets)
 }
+#' @importFrom stats is.leaf
 layoutSpread <- function(den) {
     if (is.leaf(den)) {
         attr(den, 'height') <- 0
@@ -1063,6 +1074,7 @@ enumerateClusters <- function(clusters) {
     }
     clusters
 }
+#' @importFrom stats is.leaf
 enumerateNodes <- function(den, start) {
     if (is.leaf(den)) {
         attr(den, 'enumerator') <- start
@@ -1073,6 +1085,7 @@ enumerateNodes <- function(den, start) {
     }
     den
 }
+#' @importFrom stats is.leaf
 getCoordinates <- function(clusters) {
     getCoord <- function(den) {
         if (is.leaf(den)) {
@@ -1093,6 +1106,7 @@ getCoordinates <- function(clusters) {
     }
     do.call(rbind, lapply(lapply(clusters, getCoord), data.frame))
 }
+#' @importFrom stats is.leaf
 getPath <- function(den, leaf) {
     id <- attr(den, 'enumerator')
     if (!is.leaf(den)) {
@@ -1105,6 +1119,7 @@ getPath <- function(den, leaf) {
         id
     }
 }
+#' @importFrom utils head tail
 bundleStrength <- function(path, strength) {
     formula <- function(p, startInd, endInd, pathLengths) {
         start <- rep(p[startInd], pathLengths)

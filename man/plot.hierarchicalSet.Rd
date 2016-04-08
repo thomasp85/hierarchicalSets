@@ -81,7 +81,7 @@ Currently 4 different plottypes are available:
   nicely as high value squares away from the diagonal.}
   \item{\strong{composite}}{Combines dendrogram, intersectStack and heatmap
   into a composite plot.}
-  \item{\strong{outlying_elements}}{Plots intersects between two sets that are
+  \item{\strong{outlyingElements}}{Plots intersects between two sets that are
   missing from the intersect of their shared top node as hierarchical edge
   bundles. It helps detect deviations from the global structure as defined
   by the hierarchcial clustering.}

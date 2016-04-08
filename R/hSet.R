@@ -31,6 +31,8 @@
 #'
 #' @aliases HierarchicalSet
 #'
+#' @importFrom stats is.leaf
+#'
 #' @export
 #'
 #' @examples
@@ -161,6 +163,7 @@ format_sets.list <- function(x) {
     format_sets(x)
 }
 #' @importFrom Matrix Matrix
+#' @importFrom methods as
 #'
 #' @export
 #'
@@ -181,6 +184,8 @@ format_sets.matrix <- function(x) {
     }
     as(Matrix(x, sparse = TRUE), 'ngCMatrix')
 }
+#' @importFrom methods as
+#'
 #' @export
 #'
 format_sets.Matrix <- function(x) {
