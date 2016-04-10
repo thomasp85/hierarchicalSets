@@ -48,8 +48,8 @@ different sets do, or do not, relate to each other.
 
 ## How do I get it?
 The stable version is available on CRAN with 
-`install.packages(hierarchicalSets)`. Alternatively the development version can
-be obtained from GitHub using devtools:
+`install.packages('hierarchicalSets')`. Alternatively the development version 
+can be obtained from GitHub using devtools:
 
 ```r
 if (!require(devtools)) {
