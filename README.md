@@ -47,8 +47,9 @@ obviously support a hierarchy, it can be interesting to look at how the
 different sets do, or do not, relate to each other.
 
 ## How do I get it?
-A CRAN release is imminent, but until then you can grab it from GitHub using 
-devtools:
+The stable version is available on CRAN with 
+`install.packages(hierarchicalSets)`. Alternatively the development version can
+be obtained from GitHub using devtools:
 
 ```r
 if (!require(devtools)) {
