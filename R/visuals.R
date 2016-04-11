@@ -3,14 +3,14 @@ NULL
 
 #' Visualize hierarchical sets
 #'
-#' This is the main visualization interface to hierarchicalSet object. By
+#' This is the main visualization interface to HierarchicalSet object. By
 #' changing the type argument you control which types of plots are produced. See
 #' datails for a walkthrough of the different plot types. All plots are based on
 #' ggplot2 but heavily modified using gtable. Because of this the return value
 #' is always a gtable object, so it is not possible to add additional geoms, or
 #' change scales etc. on the result of \code{plot()}.
 #'
-#' @param x A hierarchicalSet object to plot.
+#' @param x A HierarchicalSet object to plot.
 #'
 #' @param label logical. Should sets be labeled.
 #'

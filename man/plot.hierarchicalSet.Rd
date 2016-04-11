@@ -10,7 +10,7 @@
   evenHierarchy = circular, ...)
 }
 \arguments{
-\item{x}{A hierarchicalSet object to plot.}
+\item{x}{A HierarchicalSet object to plot.}
 
 \item{label}{logical. Should sets be labeled.}
 
@@ -53,7 +53,7 @@ A gtable object invisibly. This function is mainly called for the
 side effect of creating a plot.
 }
 \description{
-This is the main visualization interface to hierarchicalSet object. By
+This is the main visualization interface to HierarchicalSet object. By
 changing the type argument you control which types of plots are produced. See
 datails for a walkthrough of the different plot types. All plots are based on
 ggplot2 but heavily modified using gtable. Because of this the return value

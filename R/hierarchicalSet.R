@@ -1,9 +1,9 @@
 #' @include hSet.R
 NULL
 
-#' @describeIn create_hierarchy Print method for hierarchicalSet objects
+#' @describeIn create_hierarchy Print method for HierarchicalSet objects
 #'
-#' @param x A hierarchicalSet object
+#' @param x A HierarchicalSet object
 #'
 #' @param ... Currently ignored
 #'
@@ -15,7 +15,7 @@ print.HierarchicalSet <- function(x, ...) {
     cat('                Number of sets: ', n_sets(x), '\n', sep = '')
     cat('Number of independent clusters: ', n_clusters(x), '\n', sep = '')
 }
-#' @describeIn create_hierarchy Extract dendrogram objects from hierarchicalSet objects
+#' @describeIn create_hierarchy Extract dendrogram objects from HierarchicalSet objects
 #'
 #' @param i The index of the dendrogram
 #'
@@ -24,7 +24,7 @@ print.HierarchicalSet <- function(x, ...) {
 `[[.HierarchicalSet` <- function(x, i) {
     clusters(x)[[i]]
 }
-#' @describeIn create_hierarchy Subset hierarchicalSet object by dendrogram (preserving set
+#' @describeIn create_hierarchy Subset HierarchicalSet object by dendrogram (preserving set
 #' information and class)
 #'
 #' @importFrom stats dendrapply
@@ -43,7 +43,7 @@ print.HierarchicalSet <- function(x, ...) {
         })
     })
     res <- list(sets = newSets, clusters = newClusters)
-    class(res) <- 'hierarchicalSet'
+    class(res) <- 'HierarchicalSet'
     res
 }
 #' Getters for HierarchicalSet objects

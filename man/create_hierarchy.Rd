@@ -49,7 +49,7 @@ columns, or a list of vectors giving the elements of the individual sets.}
 be considered part of the intersect. Standard intersects require it to be
 present in all sets (intersectLimit = 1), which is also the default}
 
-\item{x}{A hierarchicalSet object}
+\item{x}{A HierarchicalSet object}
 
 \item{...}{Currently ignored}
 
@@ -59,12 +59,12 @@ present in all sets (intersectLimit = 1), which is also the default}
 An object of class HierarchicalSet
 }
 \description{
-hierarchicalSet object can be created using the \code{hSet()} constructor.
+HierarchicalSet object can be created using the \code{hSet()} constructor.
 The resulting object will contain both the underlying sets as well as the
 resulting clustering.
 }
 \details{
-The hierarchicalSet class contains both the clustering and the original sets.
+The HierarchicalSet class contains both the clustering and the original sets.
 The former is stored in a list of dendrogram objects in and the latter as a
 presence/absence matrix. Both are retrivable using \code{$clusters} and
 \code{$sets} respectively. Furthermore individual dendrograms can be
@@ -76,11 +76,11 @@ For plotting functionality see the separate plot documentation for
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{print}: Print method for hierarchicalSet objects
+\item \code{print}: Print method for HierarchicalSet objects
 
-\item \code{[[}: Extract dendrogram objects from hierarchicalSet objects
+\item \code{[[}: Extract dendrogram objects from HierarchicalSet objects
 
-\item \code{[}: Subset hierarchicalSet object by dendrogram (preserving set
+\item \code{[}: Subset HierarchicalSet object by dendrogram (preserving set
 information and class)
 
 \item \code{sets}: Extract the sets as a sparse matrix

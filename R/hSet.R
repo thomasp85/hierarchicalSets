@@ -4,7 +4,7 @@
 
 #' Create and store hierarchcical sets
 #'
-#' hierarchicalSet object can be created using the \code{hSet()} constructor.
+#' HierarchicalSet object can be created using the \code{hSet()} constructor.
 #' The resulting object will contain both the underlying sets as well as the
 #' resulting clustering.
 #'
@@ -19,7 +19,7 @@
 #' @return An object of class HierarchicalSet
 #'
 #' @details
-#' The hierarchicalSet class contains both the clustering and the original sets.
+#' The HierarchicalSet class contains both the clustering and the original sets.
 #' The former is stored in a list of dendrogram objects in and the latter as a
 #' presence/absence matrix. Both are retrivable using \code{$clusters} and
 #' \code{$sets} respectively. Furthermore individual dendrograms can be
