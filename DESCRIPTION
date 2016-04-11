@@ -1,8 +1,8 @@
 Package: hierarchicalSets
 Type: Package
 Title: Set Data Visualization Using Hierarchies
-Version: 1.0.1
-Date: 2016-04-07
+Version: 1.0.2
+Date: 2016-04-11
 Author: Thomas Lin Pedersen
 Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
 Description: Pure set data visualization approaches are often limited in
