@@ -4,6 +4,8 @@
 \alias{HierarchicalSet}
 \alias{[.HierarchicalSet}
 \alias{[[.HierarchicalSet}
+\alias{cluster_members.HierarchicalSet}
+\alias{cluster_sizes.HierarchicalSet}
 \alias{clusters.HierarchicalSet}
 \alias{create_hierarchy}
 \alias{element_names.HierarchicalSet}
@@ -12,6 +14,7 @@
 \alias{n_elements.HierarchicalSet}
 \alias{n_sets.HierarchicalSet}
 \alias{print.HierarchicalSet}
+\alias{set_membership.HierarchicalSet}
 \alias{set_names.HierarchicalSet}
 \alias{sets.HierarchicalSet}
 \title{Create and store hierarchcical sets}
@@ -39,6 +42,12 @@ create_hierarchy(sets, intersectLimit = 1)
 \method{n_elements}{HierarchicalSet}(x)
 
 \method{n_clusters}{HierarchicalSet}(x)
+
+\method{cluster_sizes}{HierarchicalSet}(x)
+
+\method{cluster_members}{HierarchicalSet}(x)
+
+\method{set_membership}{HierarchicalSet}(x)
 }
 \arguments{
 \item{sets}{The sets to analyse. Can either be a matrix/data.frame giving the
@@ -98,6 +107,12 @@ information and class)
 \item \code{n_elements}: Get the number of elements
 
 \item \code{n_clusters}: Get the number of clusters
+
+\item \code{cluster_sizes}: Get the size of each clusters
+
+\item \code{cluster_members}: Get the members of each clusters
+
+\item \code{set_membership}: Get the membership of each set
 }}
 \examples{
 data('twitter')

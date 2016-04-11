@@ -2,11 +2,14 @@
 % Please edit documentation in R/hierarchicalSet.R
 \name{HierarchicalSet-getters}
 \alias{HierarchicalSet-getters}
+\alias{cluster_members}
+\alias{cluster_sizes}
 \alias{clusters}
 \alias{element_names}
 \alias{n_clusters}
 \alias{n_elements}
 \alias{n_sets}
+\alias{set_membership}
 \alias{set_names}
 \alias{sets}
 \title{Getters for HierarchicalSet objects}
@@ -24,6 +27,12 @@ n_sets(x)
 n_elements(x)
 
 n_clusters(x)
+
+cluster_sizes(x)
+
+cluster_members(x)
+
+set_membership(x)
 }
 \arguments{
 \item{x}{A HierarchicalSet object}
@@ -51,6 +60,12 @@ elements
 \code{n_elements} returns the number of elements
 
 \code{n_clusters} returns the number of independent set families
+
+\code{cluster_sizes} returns the number of sets in each independent set family
+
+\code{cluster_members} returns the members of each independent set family
+
+\code{set_membership} returns the cluster each set is member of
 }
 \examples{
 data('twitter')
@@ -77,6 +92,15 @@ n_elements(twitSet)
 
 # Get the number of independent clusters
 n_clusters(twitSet)
+
+# Get the size of each independent clusters
+cluster_sizes(twitSet)
+
+# Get the members of each independent clusters
+cluster_members(twitSet)
+
+# Get the membership of each set
+set_membership(twitSet)
 
 }
 

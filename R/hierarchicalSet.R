@@ -179,3 +179,59 @@ n_clusters <- function(x) UseMethod('n_clusters')
 #'
 #' @export
 n_clusters.HierarchicalSet <- function(x) length(clusters(x))
+#' @rdname hs-get
+#'
+#' @details
+#' \code{cluster_sizes} returns the number of sets in each independent set family
+#'
+#' @export
+#'
+#' @examples
+#' # Get the size of each independent clusters
+#' cluster_sizes(twitSet)
+#'
+cluster_sizes <- function(x) UseMethod('cluster_sizes')
+#' @describeIn create_hierarchy Get the size of each clusters
+#'
+#' @export
+cluster_sizes.HierarchicalSet <- function(x) {
+    unlist(lapply(clusters(x), attr, 'members'))
+}
+#' @rdname hs-get
+#'
+#' @details
+#' \code{cluster_members} returns the members of each independent set family
+#'
+#' @export
+#'
+#' @examples
+#' # Get the members of each independent clusters
+#' cluster_members(twitSet)
+#'
+cluster_members <- function(x) UseMethod('cluster_members')
+#' @describeIn create_hierarchy Get the members of each clusters
+#'
+#' @export
+cluster_members.HierarchicalSet <- function(x) {
+    lapply(clusters(x), attr, 'memberSets')
+}
+#' @rdname hs-get
+#'
+#' @details
+#' \code{set_membership} returns the cluster each set is member of
+#'
+#' @export
+#'
+#' @examples
+#' # Get the membership of each set
+#' set_membership(twitSet)
+#'
+set_membership <- function(x) UseMethod('set_membership')
+#' @describeIn create_hierarchy Get the membership of each set
+#'
+#' @export
+set_membership.HierarchicalSet <- function(x) {
+    members <- cluster_members(x)
+    membership <- rep(seq_along(members), lengths(members))
+    membership[order(unlist(members))]
+}
