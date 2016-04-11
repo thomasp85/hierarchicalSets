@@ -70,25 +70,19 @@ std::vector<int> getIntersection(IntegerVector& I, IntegerVector& P, std::vector
     for (i = 0; i < nSets; ++i) {
         maxElem = std::max(maxElem, P[sets[i]+1] - P[sets[i]]);
     }
-    int *intersect = new int[maxElem];
-    int *intersect2 = new int[maxElem];
-    int *intersectTmp;
-    int *intersectEnd;
+    std::vector<int> intersect, intersect2;
+    intersect.reserve(maxElem);
+    intersect2.reserve(maxElem);
     IntegerVector::iterator setStart = I.begin();
 
-    intersectEnd = std::copy(setStart + P[sets[0]], setStart + P[sets[0]+1], intersect);
+    std::copy(setStart + P[sets[0]], setStart + P[sets[0]+1], std::back_inserter(intersect));
     for (i = 1; i < nSets; ++i) {
-        intersectEnd = std::set_intersection(intersect, intersectEnd, setStart + P[sets[i]], setStart + P[sets[i]+1], intersect2);
-        intersectTmp = intersect;
-        intersect = intersect2;
-        intersect2 = intersectTmp;
+        std::set_intersection(intersect.begin(), intersect.end(), setStart + P[sets[i]], setStart + P[sets[i]+1], std::back_inserter(intersect2));
+        intersect.swap(intersect2);
+        intersect2.clear();
     }
-    std::vector<int> results(intersect, intersectEnd);
 
-    delete[] intersect;
-    delete[] intersect2;
-
-    return results;
+    return intersect;
 }
 
 List createTree(std::map<int, Cluster>& nodes, int key, CharacterVector& setNames) {
@@ -129,6 +123,8 @@ List createTree(std::map<int, Cluster>& nodes, int key, CharacterVector& setName
 std::vector<int> getOutliersRecurse(List clusters, std::deque<int>& from, std::deque<int>& to, std::deque<IntegerVector>& elements, IntegerVector& P, IntegerVector& I, bool count) {
     bool leaf = clusters.attr("leaf");
     if (!leaf) {
+        R_CheckUserInterrupt();
+
         int i, j;
         std::vector<int> pair(2);
         IntegerVector sets1 = as<List>(clusters[0]).attr("memberSets");
