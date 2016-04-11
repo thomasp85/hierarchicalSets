@@ -137,5 +137,10 @@ plots are the foundation for any good visualization. You can always augment a
 static visualization with interactivity, but not all interactive visualizations
 can be used in a static way. That being said, it could be fun to experiment with
 said augmentation within a shiny app. Also, the implementation begins to 
-struggle when being used with thousands of sets and millions of elements - some
-C++ wizardry might be warranted for such huge datasets.
+struggle (just slow down actually) when being used with thousands of sets and 
+millions of elements - some C++ wizardry might be warranted for such huge 
+datasets.
+
+Another nice idea I have in mind is to be able to keep set and element metadata
+within the HierarchicalSet object and seemlessly use it for plotting.
+
