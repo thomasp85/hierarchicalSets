@@ -109,7 +109,7 @@ List createTree(std::map<int, Cluster>& nodes, int key, CharacterVector& setName
         members = as<List>(tree[0]).attr("members");
         tree.attr("midpoint") = (members + x1 + x2) / 2;
     }
-    tree.attr("members") = it->second.members.size();
+    tree.attr("members") = (int) it->second.members.size();
     tree.attr("height") = (1.0 / it->second.homogeneity) - 1;
     tree.attr("leaf") = it->second.leaf;
     tree.attr("intersect") = it->second.iSize;
