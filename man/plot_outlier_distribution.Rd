@@ -4,12 +4,15 @@
 \alias{plot_outlier_distribution}
 \title{Plot the outlying elements of a HierarchicalSet object}
 \usage{
-plot_outlier_distribution(x, alpha = 0.3)
+plot_outlier_distribution(x, alpha = 0.3, outliers = NULL)
 }
 \arguments{
 \item{x}{A HierarchicalSet object}
 
 \item{alpha}{The transparancy of the dots}
+
+\item{outliers}{Precomputed outlying elements as returned from
+\code{\link{outlying_elements}}}
 }
 \value{
 This function is called for its side effects
