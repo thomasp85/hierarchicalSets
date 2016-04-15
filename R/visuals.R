@@ -87,7 +87,8 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
                                  quantiles = 0, upperBound = 1, tension = 0.8,
                                  alpha = 1, circular = TRUE,
                                  showHierarchy = !circular,
-                                 evenHierarchy = circular, ...) {
+                                 evenHierarchy = circular, outliers = NULL,
+                                 ...) {
     types <- c(
         'dendrogram',
         'intersectStack',
@@ -124,7 +125,8 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
         outData <- createOutlierData(x, quantiles = quantiles,
                                      tension = tension, circular = circular,
                                      evenHierarchy = evenHierarchy,
-                                     upperBound = upperBound)
+                                     upperBound = upperBound,
+                                     outliers = outliers)
     }
     p <- switch(
         type,
@@ -157,6 +159,9 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
 #'
 #' @param alpha The transparancy of the dots
 #'
+#' @param outliers Precomputed outlying elements as returned from
+#' \code{\link{outlying_elements}}
+#'
 #' @return This function is called for its side effects
 #'
 #' @seealso \code{\link{outlying_elements}} for extracting outlying element
@@ -172,9 +177,12 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
 #' twitSet <- create_hierarchy(twitter)
 #' plot_outlier_distribution(twitSet)
 #'
-plot_outlier_distribution <- function(x, alpha = 0.3) {
+plot_outlier_distribution <- function(x, alpha = 0.3, outliers = NULL) {
     if (!inherits(x, 'HierarchicalSet')) {
         stop('plotOutDist only supports HierarchicalSet objects')
+    }
+    if (is.null(outliers) || is.null(outliers$outliers)) {
+        outliers <- outlying_elements(x, FALSE)
     }
     out <- table(unlist(outlying_elements(x, FALSE)$outliers))
     out <- data.frame(
@@ -645,6 +653,8 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy, alph
             newLim <- c(-1, 1) * maxLength*0.12
             p <- p + expand_limits(x = newLim, y = newLim)
             p <- p + theme(panel.border = element_blank())
+        } else {
+            nColumns <- 1
         }
         p <- p + coord_fixed()
         p <- p + scale_color_gradientn(
@@ -810,19 +820,22 @@ createBarData <- function(sets) {
 }
 #' @importFrom stats quantile
 createOutlierData <- function(x, quantiles, tension, circular,
-                              evenHierarchy = TRUE, upperBound = 1) {
-    out <- outlying_elements(x)
-    splits <- quantile(out$nOutliers, quantiles)
-    out$group <- NA
-    for (i in seq_along(splits)) {
-        out$group[out$nOutliers >= splits[i]] <- names(splits)[i]
+                              evenHierarchy = TRUE, upperBound = 1,
+                              outliers = NULL) {
+    if (is.null(outliers)) {
+        outliers <- outlying_elements(x)
     }
-    out$group[out$nOutliers > quantile(out$nOutliers, upperBound)] <- NA
-    out <- out[!is.na(out$group),]
-    bundles <- createBundles(clusters(x), out[, 1:2], tension = tension,
+    splits <- quantile(outliers$nOutliers, quantiles)
+    outliers$group <- NA
+    for (i in seq_along(splits)) {
+        outliers$group[outliers$nOutliers >= splits[i]] <- names(splits)[i]
+    }
+    outliers$group[outliers$nOutliers > quantile(outliers$nOutliers, upperBound)] <- NA
+    outliers <- outliers[!is.na(outliers$group),]
+    bundles <- createBundles(clusters(x), outliers[, 1:2], tension = tension,
                              circular = circular)
-    bundles$nOutliers <- out$nOutliers[bundles$id]
-    bundles$group <- factor(out$group[bundles$id], levels = names(splits))
+    bundles$nOutliers <- outliers$nOutliers[bundles$id]
+    bundles$group <- factor(outliers$group[bundles$id], levels = names(splits))
     if (evenHierarchy) {
         x$clusters <- lapply(clusters(x), layoutSpread)
     }
