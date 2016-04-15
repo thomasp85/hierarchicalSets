@@ -7,7 +7,7 @@
 \method{plot}{HierarchicalSet}(x, label = TRUE, type = "dendrogram",
   transform = NULL, style = theme_bw(), quantiles = 0, upperBound = 1,
   tension = 0.8, alpha = 1, circular = TRUE, showHierarchy = !circular,
-  evenHierarchy = circular, ...)
+  evenHierarchy = circular, outliers = NULL, ...)
 }
 \arguments{
 \item{x}{A HierarchicalSet object to plot.}
@@ -45,6 +45,9 @@ to the left (for linear) of the edge bundles.}
 
 \item{evenHierarchy}{Logical. Should the heights of the dendrogram used for
 constructing the edge bundles be evened out.}
+
+\item{outliers}{A precomputed data.frame with outlier information, as
+returned by \code{\link{outlying_elements}}.}
 
 \item{...}{Currently ignored}
 }

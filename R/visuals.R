@@ -46,6 +46,9 @@ NULL
 #' @param evenHierarchy Logical. Should the heights of the dendrogram used for
 #' constructing the edge bundles be evened out.
 #'
+#' @param outliers A precomputed data.frame with outlier information, as
+#' returned by \code{\link{outlying_elements}}.
+#'
 #' @param ... Currently ignored
 #'
 #' @return A gtable object invisibly. This function is mainly called for the
