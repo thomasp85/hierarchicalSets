@@ -213,6 +213,8 @@ List setClustering(IntegerVector P, IntegerVector I, CharacterVector setNames, d
     }
     std::deque<Cluster> possibles;
     for (familyIt1 = allNodes.begin(); familyIt1 != allNodes.end(); ++familyIt1) {
+        R_CheckUserInterrupt();
+
         familyIt2 = familyIt1;
         ++familyIt2;
         for (; familyIt2 != allNodes.end(); ++familyIt2) {
@@ -235,6 +237,8 @@ List setClustering(IntegerVector P, IntegerVector I, CharacterVector setNames, d
     }
     std::sort(possibles.begin(), possibles.end(), homogeneityComp);
     while (!possibles.empty()) {
+        R_CheckUserInterrupt();
+
         // Get next to merge
         Cluster nextFamily = possibles.back();
         possibles.pop_back();
