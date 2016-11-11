@@ -49,6 +49,14 @@ NULL
 #' @param outliers A precomputed data.frame with outlier information, as
 #' returned by \code{\link{outlying_elements}}.
 #'
+#' @param ratio Should outliers be plotted as a ratio instead of the raw number.
+#' If \code{NULL} the raw number is used, If \code{"min"} the raw number is
+#' divided by the number of elements in the smallest set of the pair, if
+#' \code{"max"} the largest set, and if \code{"mean"} the mean pair size.
+#'
+#' @param n The number of coordinates to calculate for each edge in the
+#' outlyingElements plot.
+#'
 #' @param ... Currently ignored
 #'
 #' @return A gtable object invisibly. This function is mainly called for the
@@ -91,7 +99,7 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
                                  alpha = 1, circular = TRUE,
                                  showHierarchy = !circular,
                                  evenHierarchy = circular, outliers = NULL,
-                                 ...) {
+                                 ratio = NULL, n = 50, ...) {
     types <- c(
         'dendrogram',
         'intersectStack',
@@ -129,7 +137,7 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
                                      tension = tension, circular = circular,
                                      evenHierarchy = evenHierarchy,
                                      upperBound = upperBound,
-                                     outliers = outliers)
+                                     outliers = outliers, ratio = ratio, n = n)
     }
     p <- switch(
         type,
@@ -145,7 +153,7 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
             style = style, label = label, transform = transform
         ),
         outlyingElements = createOutlierTable(outData, style, label, circular,
-                                              showHierarchy, alpha),
+                                              showHierarchy, alpha, ...),
         stop('Unknown plot type')
     )
     grid.newpage()
@@ -187,7 +195,7 @@ plot_outlier_distribution <- function(x, alpha = 0.3, outliers = NULL) {
     if (is.null(outliers) || is.null(outliers$outliers)) {
         outliers <- outlying_elements(x, FALSE)
     }
-    out <- table(unlist(outlying_elements(x, FALSE)$outliers))
+    out <- table(unlist(outliers$outliers))
     out <- data.frame(
         element = as.integer(names(out)),
         nOutlier = as.integer(out),
@@ -277,8 +285,6 @@ outlying_elements <- function(x, counts = TRUE) {
 #'
 #' @return A gtable object ready to draw
 #'
-#' @importFrom grid nullGrob
-#'
 #' @noRd
 #'
 createDenTable <- function(data, style, label = TRUE, transform = NULL) {
@@ -304,24 +310,14 @@ createDenTable <- function(data, style, label = TRUE, transform = NULL) {
     p <- p + xlab(expression(paste(lambda, "'") ~~ italic("heterogeneity")))
     p <- p + scale_x_continuous(trans = transReverser(transform),
                                 expand = c(0, 0))
-    p <- p + expand_limits(x = c(0, max(data$segments$y)*1.025))
     p <- p + scale_y_continuous(breaks = data$labels$x,
                                 labels = data$labels$label, expand = c(0,0.5),
-                                limits = c(1, max(data$labels$x)))
+                                limits = c(1, max(data$labels$x)),
+                                position = 'right')
     p <- p + geom_segment(aes_(y = ~x, x = ~y, yend = ~xend, xend = ~yend),
                           data = data$segments, lineend = 'round')
-    pBuild <- ggplot_build(p)
-    yaxisGrob <- ggplot2:::guide_axis(at = pBuild$panel$ranges[[1]]$y.major,
-                                      data$labels$label, 'right', p$theme)
-    p <- ggplot_gtable(pBuild)
-
-    p$grobs[[2]] <- if (label) yaxisGrob else nullGrob()
-    p$widths <- p$widths[c(1, 2, 4, 3, 5)]
-    p$layout$l[p$layout$name == 'axis-l'] <- 4
-    p$layout$r[p$layout$name == 'axis-l'] <- 4
-    p$layout$l[p$layout$name %in% c('panel', 'axis-b', 'xlab')] <- 3
-    p$layout$r[p$layout$name %in% c('panel', 'axis-b', 'xlab')] <- 3
-    p
+    p <- p + expand_limits(x = c(0, max(data$segments$y)*1.025))
+    ggplotGrob(p)
 }
 #' Based on createIceData create a gtable
 #'
@@ -359,7 +355,10 @@ createIceTable <- function(data, style, label = TRUE, yaxis = 'left',
         panel.border = element_blank(),
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
-        axis.title.y = element_text(angle = if (showHierarchy) 90 else 0),
+        axis.title.y = element_text(angle = if (showHierarchy) 90 else 0,
+                                    vjust = if (showHierarchy) 1 else 0.5),
+        axis.title.y.right = element_text(angle = if (showHierarchy) -90 else 0,
+                                    vjust = if (showHierarchy) 1 else 0.5),
         axis.text.y = element_text(hjust = if (yaxis == 'left') 1 else 0)
     )
     if (!label) {
@@ -391,7 +390,7 @@ createIceTable <- function(data, style, label = TRUE, yaxis = 'left',
     p <- p + geom_rect(aes_(xmin = ~xmin, xmax = ~xmax, ymin = ~ymin,
                             ymax = ~ymax, fill = ~degree),
                        data = data$rectangles, color = I('white'))
-    p <- p + scale_y_continuous(trans = transform, expand = c(0, 0))
+    p <- p + scale_y_continuous(trans = transform, expand = c(0, 0), position = yaxis)
     p <- p + scale_x_continuous(expand = c(0, 0), breaks = data$labels$x,
                                 labels = data$labels$label)
     p <- p + scale_fill_gradientn(
@@ -407,22 +406,7 @@ createIceTable <- function(data, style, label = TRUE, yaxis = 'left',
         p <- p + ylab(expression(group('|', intersect(), '|')))
     }
 
-    pBuild <- ggplot_build(p)
-    yaxisGrob <- ggplot2:::guide_axis(at = pBuild$panel$ranges[[1]]$y.major,
-                                      pBuild$panel$ranges[[1]]$y.labels,
-                                      'right', p$theme)
-    p <- ggplot_gtable(pBuild)
-    if (yaxis == 'right') {
-        p$grobs[[2]] <- yaxisGrob
-        p$widths <- p$widths[c(1, 4, 3, 2, 5, 6)]
-        p$layout$l[p$layout$name == 'axis-l'] <- 3
-        p$layout$r[p$layout$name == 'axis-l'] <- 3
-        p$layout$l[p$layout$name == 'ylab'] <- 4
-        p$layout$r[p$layout$name == 'ylab'] <- 4
-        p$layout$l[p$layout$name %in% c('panel', 'axis-b', 'xlab')] <- 2
-        p$layout$r[p$layout$name %in% c('panel', 'axis-b', 'xlab')] <- 2
-    }
-    p
+    ggplotGrob(p)
 }
 #' @importFrom gtable gtable_width
 createHeatTable <- function(data, style, label = TRUE, transform = NULL) {
@@ -459,6 +443,8 @@ createHeatTable <- function(data, style, label = TRUE, transform = NULL) {
     pal <- unionScale$palette(unionScale$rescaler(val))
     data$circles$unionCol <- pal[match(data$circles$union, val)]
 
+    p <- p + geom_tile(aes(x = 1, y = 1, fill = 1), alpha = 0)
+    p <- p + geom_path(aes(x = 1:2, y = 1:2, colour = c(1, 1), group = c(1,1)), alpha = 0)
     p <- p + geom_polygon(aes_(x = ~x, y = ~y, group = ~group),
                           data = data$path, fill = I(data$path$intersectCol))
     p <- p + geom_rect(aes_(xmin = ~x - 0.25, xmax = ~x + 0.25,
@@ -478,14 +464,13 @@ createHeatTable <- function(data, style, label = TRUE, transform = NULL) {
     customScales$add(intersectScale)
     customScales$add(unionScale)
     guides <- ggplot2:::build_guides(
-        customScales,p$layers, p$mapping, 'right', p$theme, p$guides, p$labels
+        customScales, p$layers, p$mapping, 'right', p$theme, p$guides, p$labels
     )
-    guideWidth <- gtable_width(guides) + p$theme$legend.margin
 
     p <- ggplotGrob(p)
-    p <- gtable_add_cols(p, guideWidth, 4)
-    p <- gtable_add_grob(p, guides, t = 3, l = 5, clip = 'off',
-                         name = 'guide-box')
+    guide_pos <- which(p$layout$name == 'guide-box')
+    p$grobs[[guide_pos]] <- guides
+    p$widths[p$layout$l[guide_pos]] <- gtable_width(guides)
     p
 }
 createBarTable <- function(data, style, label = TRUE, yaxis = 'left',
@@ -515,27 +500,11 @@ createBarTable <- function(data, style, label = TRUE, yaxis = 'left',
     }
     p <- p + geom_bar(aes_(x = ~x, y = ~y), data = data, stat = 'identity')
     p <- p + ylab('# unique')
-    p <- p + scale_y_continuous(trans = transform, expand = c(0, 0))
+    p <- p + scale_y_continuous(trans = transform, expand = c(0, 0), position = yaxis)
     p <- p + scale_x_continuous(expand = c(0, 0), breaks = data$x,
                                 labels = data$label)
-    pBuild <- ggplot_build(p)
-    yaxisGrob <- ggplot2:::guide_axis(at = pBuild$panel$ranges[[1]]$y.major,
-                                      pBuild$panel$ranges[[1]]$y.labels,
-                                      'right', p$theme)
-    p <- ggplot_gtable(pBuild)
 
-    if (yaxis == 'right') {
-        p$grobs[[2]] <- yaxisGrob
-        p$widths <- p$widths[c(1, 4, 3, 2, 5)]
-        p$layout$l[p$layout$name == 'axis-l'] <- 3
-        p$layout$r[p$layout$name == 'axis-l'] <- 3
-        p$layout$l[p$layout$name == 'ylab'] <- 4
-        p$layout$r[p$layout$name == 'ylab'] <- 4
-        p$layout$l[p$layout$name %in% c('panel', 'axis-b', 'xlab')] <- 2
-        p$layout$r[p$layout$name %in% c('panel', 'axis-b', 'xlab')] <- 2
-    }
-
-    p
+    ggplotGrob(p)
 }
 #' @importFrom gtable gtable gtable_add_grob
 #' @importFrom grid unit.c nullGrob
@@ -550,31 +519,32 @@ createCompositeTable <- function(den, ice, heat, bar, style, label, transform) {
                           transform = transform$bar)
 
     legends <- gtable(
-        widths = unit.c(unit(1, 'null'), heat$widths[5], heat$widths[5],
-                        ice$widths[5], unit(1, 'null')),
-        heights = unit.c(den$heights[4:5], unit(1, 'null'))
+        widths = unit.c(unit(1, 'null'), heat$widths[8], unit(0.5, 'cm'),
+                        heat$widths[8], unit(0.5, 'cm'), ice$widths[8],
+                        unit(1, 'null')),
+        heights = unit.c(den$heights[7:8], unit(1, 'null'))
     )
     legends <- gtable_add_grob(
         legends,
         grobs = list(
-            den$grobs[[5]],
-            den$grobs[[6]],
-            heat$grobs[[9]]$grobs[[1]],
-            heat$grobs[[9]]$grobs[[2]],
-            ice$grobs[[8]]$grobs[[1]]
+            den$grobs[[7]],
+            den$grobs[[12]],
+            heat$grobs[[15]]$grobs[[1]],
+            heat$grobs[[15]]$grobs[[2]],
+            ice$grobs[[15]]$grobs[[1]]
         ),
         t = c(1, 2, 3, 3, 3),
-        l = c(1, 1, 2, 3, 4),
-        r = c(5 ,5, 2, 3, 4),
+        l = c(1, 1, 2, 4, 6),
+        r = c(7 ,7, 2, 4, 6),
         clip = 'off'
     )
     widths <- unit.c(
         unit(0.5, 'lines'),
         unit(1, 'null'),
         unit(1, 'null'),
-        max(ice$widths[3], bar$widths[3]),
-        max(ice$widths[4], bar$widths[4]),
-        if (label) den$widths[4] else unit(1, 'lines')
+        max(ice$widths[5], bar$widths[5]),
+        max(ice$widths[6], bar$widths[6]),
+        if (label) den$widths[5] else unit(1, 'lines')
     )
     heights <- unit.c(
         unit(1, 'lines'),
@@ -582,7 +552,7 @@ createCompositeTable <- function(den, ice, heat, bar, style, label, transform) {
         unit(0.25, 'lines'),
         unit(1, 'null'),
         unit(1, 'null'),
-        if (label) ice$heights[4] else unit(0, 'lines'),
+        if (label) ice$heights[7] else unit(0, 'lines'),
         unit(1, 'lines')
     )
     p <- gtable(widths, heights)
@@ -590,10 +560,10 @@ createCompositeTable <- function(den, ice, heat, bar, style, label, transform) {
         p,
         grobs = list(
             den$grobs[[1]],
-            den$grobs[[4]],
-            bar$grobs[[4]],
-            heat$grobs[[4]],
-            ice$grobs[[4]]
+            den$grobs[[6]],
+            bar$grobs[[6]],
+            heat$grobs[[6]],
+            ice$grobs[[6]]
         ),
         t = c(1, 4, 2, 4, 5),
         l = c(1, 2, 3, 3, 3),
@@ -604,12 +574,12 @@ createCompositeTable <- function(den, ice, heat, bar, style, label, transform) {
         p,
         grobs = list(
             legends,
-            bar$grobs[[2]],
-            bar$grobs[[7]],
-            if (label) den$grobs[[2]] else nullGrob(),
-            ice$grobs[[2]],
-            ice$grobs[[7]],
-            if (label) ice$grobs[[5]] else nullGrob()
+            bar$grobs[[9]],
+            bar$grobs[[14]],
+            if (label) den$grobs[[9]] else nullGrob(),
+            ice$grobs[[9]],
+            ice$grobs[[14]],
+            if (label) ice$grobs[[7]] else nullGrob()
         ),
         t = c(5, 2, 2, 4, 5, 5, 6),
         l = c(2, 4, 5, 4, 4, 5, 3),
@@ -618,7 +588,8 @@ createCompositeTable <- function(den, ice, heat, bar, style, label, transform) {
 }
 #' @importFrom gtable gtable_add_rows gtable_add_cols
 #' @importFrom RColorBrewer brewer.pal
-createOutlierTable <- function(data, style, label, circular, showHierarchy, alpha) {
+#' @importFrom viridis viridis
+createOutlierTable <- function(data, style, label, circular, showHierarchy, alpha, colorGradient = NULL) {
     if (circular) {
         nPanels <- length(levels(data$bundles$group))
         p <- ggplot() + style + theme(
@@ -627,9 +598,16 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy, alph
             axis.title = element_blank(),
             panel.grid = element_blank()
         )
-        p <- p + geom_path(aes_(x = ~x, y = ~y, group = ~id,
-                                color = ~nOutliers),
-                           alpha = alpha, data = data$bundles)
+        if (is.null(data$bundles$ratio)) {
+            p <- p + geom_path(aes_(x = ~x, y = ~y, group = ~id,
+                                    color = ~nOutliers),
+                               alpha = alpha, data = data$bundles)
+        } else {
+            p <- p + geom_path(aes_(x = ~x, y = ~y, group = ~id,
+                                    color = ~ratio),
+                               alpha = alpha, data = data$bundles)
+        }
+
         if (label) {
             data$labels$hjust <- ifelse(data$labels$x > 0, 0, 1)
             data$labels$vjust <- 0.5
@@ -644,26 +622,38 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy, alph
             } else {
                 NULL
             }
-            p <- p + facet_wrap(~group, ncol=nColumns)
+            p <- p + facet_wrap(~group, ncol=nColumns) +
+                expand_limits(x = c(-1, 1), y = c(-1, 1))
         } else if (label) {
             nColumns <- 1
-            p  <- p + geom_text(aes_(x = ~x*1.05, y = ~y*1.05, hjust = ~hjust,
+            p  <- p + geom_text(aes_(x = ~x*1.02, y = ~y*1.02, hjust = ~hjust,
                                     vjust = ~vjust, angle = ~angle,
                                     label = ~label),
                                 data = data$labels,
                                 size = getAxisTextSize(style)*5/14)
-            maxLength <- nchar(as.character(data$labels$label))
-            newLim <- c(-1, 1) * maxLength*0.12
+            maxLength <- max(nchar(as.character(data$labels$label)))
+            newLim <- c(-1, 1) * maxLength*0.08
             p <- p + expand_limits(x = newLim, y = newLim)
             p <- p + theme(panel.border = element_blank())
         } else {
             nColumns <- 1
+            p <- p + expand_limits(x = c(-1, 1), y = c(-1, 1))
         }
         p <- p + coord_fixed()
-        p <- p + scale_color_gradientn(
-            '# Outlying\nelements',
-            colours = brewer.pal(9, 'YlOrRd')[-(1:2)]
-        )
+        if (is.null(data$bundles$ratio)) {
+            if (is.null(colorGradient)) colorGradient <- brewer.pal(9, 'YlOrRd')[-(1:2)]
+            p <- p + scale_color_gradientn(
+                '# Outlying\nelements',
+                colours = colorGradient
+            )
+        } else {
+            if (is.null(colorGradient)) colorGradient <- rev(viridis(256, option = 'A'))
+            p <- p + scale_color_gradientn(
+                'Ratio of outlying\nelements',
+                colours = colorGradient
+            )
+        }
+
         p <- ggplotGrob(p)
         if ((label && nPanels > 1) || showHierarchy) {
             denP <- ggplot() + style + theme(
@@ -812,8 +802,9 @@ createHeatData <- function(x) {
 #' @importFrom Matrix rowSums
 createBarData <- function(sets) {
     elementSizes <- rowSums(sets)
+    empty_el <- elementSizes == 0
     setUniques <- apply(sets, 2, function(x) {
-        sum(x == elementSizes)
+        sum(!empty_el & x == elementSizes)
     })
     data.frame(
         x = seq_len(ncol(sets)),
@@ -824,20 +815,44 @@ createBarData <- function(sets) {
 #' @importFrom stats quantile
 createOutlierData <- function(x, quantiles, tension, circular,
                               evenHierarchy = TRUE, upperBound = 1,
-                              outliers = NULL) {
+                              outliers = NULL, n = 50, ratio = NULL) {
     if (is.null(outliers)) {
         outliers <- outlying_elements(x)
     }
-    splits <- quantile(outliers$nOutliers, quantiles)
-    outliers$group <- NA
-    for (i in seq_along(splits)) {
-        outliers$group[outliers$nOutliers >= splits[i]] <- names(splits)[i]
+    outliers <- outliers[order(outliers$nOutliers), ]
+    if (!is.null(ratio)) {
+        setLengths <- set_sizes(x)
+        pairLengths <- switch(
+            ratio,
+            min = pmin(setLengths[outliers$setX], setLengths[outliers$setY]),
+            max = pmax(setLengths[outliers$setX], setLengths[outliers$setY]),
+            mean = (setLengths[outliers$setX] + setLengths[outliers$setY])/2,
+            stop('ratio must be either "min", "max", or "mean"')
+        )
+        outliers$ratio <- outliers$nOutliers / pairLengths
+        splits <- quantile(outliers$ratio, quantiles)
+        outliers$group <- NA
+        for (i in seq_along(splits)) {
+            outliers$group[outliers$ratio >= splits[i]] <- names(splits)[i]
+        }
+        outliers$group[outliers$ratio > quantile(outliers$ratio, upperBound)] <- NA
+        outliers <- outliers[!is.na(outliers$group),]
+    } else {
+        splits <- quantile(outliers$nOutliers, quantiles)
+        outliers$group <- NA
+        for (i in seq_along(splits)) {
+            outliers$group[outliers$nOutliers >= splits[i]] <- names(splits)[i]
+        }
+        outliers$group[outliers$nOutliers > quantile(outliers$nOutliers, upperBound)] <- NA
+        outliers <- outliers[!is.na(outliers$group),]
     }
-    outliers$group[outliers$nOutliers > quantile(outliers$nOutliers, upperBound)] <- NA
-    outliers <- outliers[!is.na(outliers$group),]
     bundles <- createBundles(clusters(x), outliers[, 1:2], tension = tension,
-                             circular = circular)
-    bundles$nOutliers <- outliers$nOutliers[bundles$id]
+                             circular = circular, detail = n)
+    if (is.null(ratio)) {
+        bundles$nOutliers <- outliers$nOutliers[bundles$id]
+    } else {
+        bundles$ratio <- outliers$ratio[bundles$id]
+    }
     bundles$group <- factor(outliers$group[bundles$id], levels = names(splits))
     if (evenHierarchy) {
         x$clusters <- lapply(clusters(x), layoutSpread)

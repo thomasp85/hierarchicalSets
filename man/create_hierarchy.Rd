@@ -16,6 +16,7 @@
 \alias{print.HierarchicalSet}
 \alias{set_membership.HierarchicalSet}
 \alias{set_names.HierarchicalSet}
+\alias{set_sizes.HierarchicalSet}
 \alias{sets.HierarchicalSet}
 \title{Create and store hierarchcical sets}
 \usage{
@@ -44,6 +45,8 @@ create_hierarchy(sets, intersectLimit = 1)
 \method{n_clusters}{HierarchicalSet}(x)
 
 \method{cluster_sizes}{HierarchicalSet}(x)
+
+\method{set_sizes}{HierarchicalSet}(x)
 
 \method{cluster_members}{HierarchicalSet}(x)
 
@@ -109,6 +112,8 @@ information and class)
 \item \code{n_clusters}: Get the number of clusters
 
 \item \code{cluster_sizes}: Get the size of each clusters
+
+\item \code{set_sizes}: Get the size of each set
 
 \item \code{cluster_members}: Get the members of each clusters
 

@@ -7,7 +7,7 @@
 \method{plot}{HierarchicalSet}(x, label = TRUE, type = "dendrogram",
   transform = NULL, style = theme_bw(), quantiles = 0, upperBound = 1,
   tension = 0.8, alpha = 1, circular = TRUE, showHierarchy = !circular,
-  evenHierarchy = circular, outliers = NULL, ...)
+  evenHierarchy = circular, outliers = NULL, ratio = NULL, n = 50, ...)
 }
 \arguments{
 \item{x}{A HierarchicalSet object to plot.}
@@ -48,6 +48,14 @@ constructing the edge bundles be evened out.}
 
 \item{outliers}{A precomputed data.frame with outlier information, as
 returned by \code{\link{outlying_elements}}.}
+
+\item{ratio}{Should outliers be plotted as a ratio instead of the raw number.
+If \code{NULL} the raw number is used, If \code{"min"} the raw number is
+divided by the number of elements in the smallest set of the pair, if
+\code{"max"} the largest set, and if \code{"mean"} the mean pair size.}
+
+\item{n}{The number of coordinates to calculate for each edge in the
+outlyingElements plot.}
 
 \item{...}{Currently ignored}
 }

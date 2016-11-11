@@ -200,6 +200,24 @@ cluster_sizes.HierarchicalSet <- function(x) {
 #' @rdname hs-get
 #'
 #' @details
+#' \code{set_sizes} returns the number of elements in each set
+#'
+#' @export
+#'
+#' @examples
+#' # Get the size of each set
+#' set_sizes(twitSet)
+#'
+set_sizes <- function(x) UseMethod('set_sizes')
+#' @describeIn create_hierarchy Get the size of each set
+#'
+#' @export
+set_sizes.HierarchicalSet <- function(x) {
+Matrix::colSums(sets(x))
+}
+#' @rdname hs-get
+#'
+#' @details
 #' \code{cluster_members} returns the members of each independent set family
 #'
 #' @export

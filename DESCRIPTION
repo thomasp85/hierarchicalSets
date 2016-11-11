@@ -1,8 +1,8 @@
 Package: hierarchicalSets
 Type: Package
 Title: Set Data Visualization Using Hierarchies
-Version: 1.0.2
-Date: 2016-04-11
+Version: 1.0.3
+Date: 2016-11-11
 Author: Thomas Lin Pedersen
 Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
 Description: Pure set data visualization approaches are often limited in
@@ -19,7 +19,7 @@ Depends:
     R (>= 3.2.0)
 Imports:
     ggdendro,
-    ggplot2 (>= 2.0.0),
+    ggplot2 (>= 2.2.0),
     stats,
     Rcpp,
     scales,
@@ -29,7 +29,8 @@ Imports:
     gtable,
     grDevices,
     methods,
-    utils
+    utils,
+    viridis
 RoxygenNote: 5.0.1
 Collate:
     'RcppExports.R'

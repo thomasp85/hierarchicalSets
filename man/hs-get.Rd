@@ -11,6 +11,7 @@
 \alias{n_sets}
 \alias{set_membership}
 \alias{set_names}
+\alias{set_sizes}
 \alias{sets}
 \title{Getters for HierarchicalSet objects}
 \usage{
@@ -29,6 +30,8 @@ n_elements(x)
 n_clusters(x)
 
 cluster_sizes(x)
+
+set_sizes(x)
 
 cluster_members(x)
 
@@ -63,6 +66,8 @@ elements
 
 \code{cluster_sizes} returns the number of sets in each independent set family
 
+\code{set_sizes} returns the number of elements in each set
+
 \code{cluster_members} returns the members of each independent set family
 
 \code{set_membership} returns the cluster each set is member of
@@ -95,6 +100,9 @@ n_clusters(twitSet)
 
 # Get the size of each independent clusters
 cluster_sizes(twitSet)
+
+# Get the size of each set
+set_sizes(twitSet)
 
 # Get the members of each independent clusters
 cluster_members(twitSet)

@@ -72,6 +72,8 @@ List getSplines(NumericVector x, NumericVector y, IntegerVector id,
     std::vector<double> knots;
     NumericMatrix path;
     for (int i = 0; i < nPaths; i++) {
+        R_CheckUserInterrupt();
+
         degree = nControls[i] <= 3 ? nControls[i] - 1 : 3;
         knots = createKnots(nControls[i], degree);
         controlInd = Range(controlsStart, controlsStart + nControls[i] - 1);
