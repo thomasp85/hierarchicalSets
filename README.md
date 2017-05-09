@@ -1,8 +1,6 @@
 # hierarchicalSets
 
-[![Travis-CI Build Status](https://travis-ci.org/thomasp85/hierarchicalSets.svg?branch=master)](https://travis-ci.org/thomasp85/hierarchicalSets)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/hierarchicalSets)](http://cran.r-project.org/package=hierarchicalSets)
-[![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/grand-total/hierarchicalSets)](http://cran.r-project.org/package=hierarchicalSets)
+[![Travis-CI Build Status](https://travis-ci.org/thomasp85/hierarchicalSets.svg?branch=master)](https://travis-ci.org/thomasp85/hierarchicalSets) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/thomasp85/hierarchicalSets?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/hierarchicalSets) [![CRAN\_Release\_Badge](http://www.r-pkg.org/badges/version-ago/hierarchicalSets)](https://CRAN.R-project.org/package=hierarchicalSets) [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/hierarchicalSets)](https://CRAN.R-project.org/package=hierarchicalSets)
 
 ## What is this?
 This is a package that facilitates hierarchical set analysis on large 
@@ -81,7 +79,7 @@ To simply have a look at the hierarchy you plot it:
 ```r
 plot(twitSet)
 ```
-![Dendrogram](https://dl.dropboxusercontent.com/u/2323585/hierarchicalSets/twitDen.png)
+![Dendrogram](https://www.dropbox.com/s/3wvj54ishumtv4d/twitDen.png?raw=1)
 
 Here the x axis is encoded with the *Set Family Heterogeneity* which is the
 inverse of the homogeneity. It can thus be interpreted as the ratio of union to
@@ -93,7 +91,7 @@ another plottype - the intersection stact
 ```r
 plot(twitSet, type = 'intersectStack', showHierarchy = TRUE)
 ```
-![Intersect](https://dl.dropboxusercontent.com/u/2323585/hierarchicalSets/twitInt.png)
+![Intersect](https://www.dropbox.com/s/mzecrimgair4p5k/twitInt.png?raw=1)
 
 We see that especially four sets are very similar, incidentally four of the 
 largest sets. The rightmost cluster is interesting as well as we see it is held 
@@ -109,7 +107,7 @@ closest shared set family. This can be shown using hierarchical edge bundles:
 ```r
 plot(twitSet, type = 'outlyingElements', quantiles = 0.8, alpha = 0.2)
 ```
-![Outliers](https://dl.dropboxusercontent.com/u/2323585/hierarchicalSets/twitOut.png)
+![Outliers](https://www.dropbox.com/s/bdtxa6xx2a1els8/twitOut.png?raw=1)
 
 It seems our four sets again draws attention to themselves by having strong
 connections to a range of other sets distant in terms of the clustering. Also
