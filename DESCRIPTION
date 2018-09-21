@@ -13,7 +13,8 @@ Description: Pure set data visualization approaches are often limited in
     representations. hierarchicalSets is especially well suited for collections
     of sets that describe comparable comparable entities as it relies on the
     sets to have a meaningful relational structure.
-License: GPL (>=2)
+License: MIT + file LICENSE
+Encoding: UTF-8
 LazyData: TRUE
 Depends:
     R (>= 3.2.0)
