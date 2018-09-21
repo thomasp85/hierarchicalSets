@@ -32,7 +32,7 @@ Imports:
     methods,
     utils,
     viridis
-RoxygenNote: 5.0.1
+RoxygenNote: 6.1.0
 Collate:
     'RcppExports.R'
     'hSet.R'

@@ -16,4 +16,3 @@ A trans object
 This function can be used to create a proper trans object that encapsulates
 a power transformation (x^n).
 }
-

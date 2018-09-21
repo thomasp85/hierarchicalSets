@@ -56,7 +56,7 @@ print.HierarchicalSet <- function(x, ...) {
 #' @return depending on the function. See details
 #'
 #' @details
-#' \code{sets} Returns a ngCMatrix with sets as columns and elements as rows.
+#' `sets` Returns a ngCMatrix with sets as columns and elements as rows.
 #'
 #' @export
 #'
@@ -80,7 +80,7 @@ sets.HierarchicalSet <- function(x) x$sets
 #' @rdname hs-get
 #'
 #' @details
-#' \code{clusters} returns a list of dendrograms with the clustering in the
+#' `clusters` returns a list of dendrograms with the clustering in the
 #' HierarchicalSet object
 #'
 #' @export
@@ -97,7 +97,7 @@ clusters.HierarchicalSet <- function(x) x$clusters
 #' @rdname hs-get
 #'
 #' @details
-#' \code{set_names} returns a character vector with the names of the sets.
+#' `set_names` returns a character vector with the names of the sets.
 #'
 #' @export
 #'
@@ -113,7 +113,7 @@ set_names.HierarchicalSet <- function(x) colnames(sets(x))
 #' @rdname hs-get
 #'
 #' @details
-#' \code{element_names} returns a character vector with the names of the
+#' `element_names` returns a character vector with the names of the
 #' elements
 #'
 #' @export
@@ -130,7 +130,7 @@ element_names.HierarchicalSet <- function(x) rownames(sets(x))
 #' @rdname hs-get
 #'
 #' @details
-#' \code{n_sets} returns the number of sets
+#' `n_sets` returns the number of sets
 #'
 #' @export
 #'
@@ -150,7 +150,7 @@ length.HierarchicalSet <- n_sets.HierarchicalSet
 #' @rdname hs-get
 #'
 #' @details
-#' \code{n_elements} returns the number of elements
+#' `n_elements` returns the number of elements
 #'
 #' @export
 #'
@@ -166,7 +166,7 @@ n_elements.HierarchicalSet <- function(x) nrow(x$sets)
 #' @rdname hs-get
 #'
 #' @details
-#' \code{n_clusters} returns the number of independent set families
+#' `n_clusters` returns the number of independent set families
 #'
 #' @export
 #'
@@ -182,7 +182,7 @@ n_clusters.HierarchicalSet <- function(x) length(clusters(x))
 #' @rdname hs-get
 #'
 #' @details
-#' \code{cluster_sizes} returns the number of sets in each independent set family
+#' `cluster_sizes` returns the number of sets in each independent set family
 #'
 #' @export
 #'
@@ -200,7 +200,7 @@ cluster_sizes.HierarchicalSet <- function(x) {
 #' @rdname hs-get
 #'
 #' @details
-#' \code{set_sizes} returns the number of elements in each set
+#' `set_sizes` returns the number of elements in each set
 #'
 #' @export
 #'
@@ -218,7 +218,7 @@ Matrix::colSums(sets(x))
 #' @rdname hs-get
 #'
 #' @details
-#' \code{cluster_members} returns the members of each independent set family
+#' `cluster_members` returns the members of each independent set family
 #'
 #' @export
 #'
@@ -236,7 +236,7 @@ cluster_members.HierarchicalSet <- function(x) {
 #' @rdname hs-get
 #'
 #' @details
-#' \code{set_membership} returns the cluster each set is member of
+#' `set_membership` returns the cluster each set is member of
 #'
 #' @export
 #'

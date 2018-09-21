@@ -35,7 +35,6 @@ twitSetOut
 
 }
 \seealso{
-\code{\link{outlying_elements}} for extracting outlying element
+\code{\link[=outlying_elements]{outlying_elements()}} for extracting outlying element
 information from a HierarchicalSet object
 }
-

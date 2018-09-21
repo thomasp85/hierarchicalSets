@@ -2,17 +2,17 @@
 % Please edit documentation in R/hierarchicalSet.R
 \name{HierarchicalSet-getters}
 \alias{HierarchicalSet-getters}
-\alias{cluster_members}
-\alias{cluster_sizes}
-\alias{clusters}
-\alias{element_names}
-\alias{n_clusters}
-\alias{n_elements}
-\alias{n_sets}
-\alias{set_membership}
-\alias{set_names}
-\alias{set_sizes}
 \alias{sets}
+\alias{clusters}
+\alias{set_names}
+\alias{element_names}
+\alias{n_sets}
+\alias{n_elements}
+\alias{n_clusters}
+\alias{cluster_sizes}
+\alias{set_sizes}
+\alias{cluster_members}
+\alias{set_membership}
 \title{Getters for HierarchicalSet objects}
 \usage{
 sets(x)
@@ -111,4 +111,3 @@ cluster_members(twitSet)
 set_membership(twitSet)
 
 }
-

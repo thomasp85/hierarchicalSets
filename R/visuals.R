@@ -8,7 +8,7 @@ NULL
 #' datails for a walkthrough of the different plot types. All plots are based on
 #' ggplot2 but heavily modified using gtable. Because of this the return value
 #' is always a gtable object, so it is not possible to add additional geoms, or
-#' change scales etc. on the result of \code{plot()}.
+#' change scales etc. on the result of `plot()`.
 #'
 #' @param x A HierarchicalSet object to plot.
 #'
@@ -18,7 +18,7 @@ NULL
 #' be abbreviated.
 #'
 #' @param transform A string giving the scale transformation or a
-#' \code{\link[scales]{trans}} object.
+#' [scales::trans()] object.
 #'
 #' @param style A ggplot2 theme to use as basis for the plot. Defaults to
 #' theme_bw().
@@ -47,12 +47,12 @@ NULL
 #' constructing the edge bundles be evened out.
 #'
 #' @param outliers A precomputed data.frame with outlier information, as
-#' returned by \code{\link{outlying_elements}}.
+#' returned by [outlying_elements()].
 #'
 #' @param ratio Should outliers be plotted as a ratio instead of the raw number.
-#' If \code{NULL} the raw number is used, If \code{"min"} the raw number is
+#' If `NULL` the raw number is used, If `"min"` the raw number is
 #' divided by the number of elements in the smallest set of the pair, if
-#' \code{"max"} the largest set, and if \code{"mean"} the mean pair size.
+#' `"max"` the largest set, and if `"mean"` the mean pair size.
 #'
 #' @param n The number of coordinates to calculate for each edge in the
 #' outlyingElements plot.
@@ -171,11 +171,11 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
 #' @param alpha The transparancy of the dots
 #'
 #' @param outliers Precomputed outlying elements as returned from
-#' \code{\link{outlying_elements}}
+#' [outlying_elements()]
 #'
 #' @return This function is called for its side effects
 #'
-#' @seealso \code{\link{outlying_elements}} for extracting outlying element
+#' @seealso [outlying_elements()] for extracting outlying element
 #' information from a HierarchicalSet object
 #'
 #' @importFrom Matrix rowSums
@@ -218,17 +218,17 @@ plot_outlier_distribution <- function(x, alpha = 0.3, outliers = NULL) {
 #' @param x A HierarchicalSet object
 #'
 #' @param counts Should number of elements rather than the actual elements be
-#' returned. Defaults to \code{TRUE}
+#' returned. Defaults to `TRUE`
 #'
 #' @return A data.frame containing information on the outlying elements of each
 #' set pair. Only pairs with outlying elements are returned. The 'setX' coloumn
 #' contains the index of the first set in the pair and the 'setY' column
-#' contains the index of the second set in the pair. If \code{counts = TRUE}
+#' contains the index of the second set in the pair. If `counts = TRUE`
 #' then the 'nOutliers' column contains the number of outlying elements for each
-#' pair. If \code{counts = FALSE} the the 'outlier' column contains the index of
+#' pair. If `counts = FALSE` the the 'outlier' column contains the index of
 #' the outlying elements for each pair
 #'
-#' @seealso \code{\link{plot_outlier_distribution}} for plotting the
+#' @seealso [plot_outlier_distribution()] for plotting the
 #' distribution  of outlying elements in a HierarchicalSet object
 #'
 #' @importFrom stats is.leaf
@@ -275,7 +275,7 @@ outlying_elements <- function(x, counts = TRUE) {
 ## HELPERS
 #' Based on createDenData create a gtable
 #'
-#' @param data Data as returned by \code{\link{createDenData}}
+#' @param data Data as returned by [createDenData()]
 #'
 #' @param style A complete ggplot theme
 #'
@@ -321,7 +321,7 @@ createDenTable <- function(data, style, label = TRUE, transform = NULL) {
 }
 #' Based on createIceData create a gtable
 #'
-#' @param data Data as returned by \code{\link{createIceData}}
+#' @param data Data as returned by [createIceData()]
 #'
 #' @param style A complete ggplot theme
 #'
@@ -445,16 +445,16 @@ createHeatTable <- function(data, style, label = TRUE, transform = NULL) {
 
     p <- p + geom_tile(aes(x = 1, y = 1, fill = 1), alpha = 0)
     p <- p + geom_path(aes(x = 1:2, y = 1:2, colour = c(1, 1), group = c(1,1)), alpha = 0)
-    p <- p + geom_polygon(aes_(x = ~x, y = ~y, group = ~group),
-                          data = data$path, fill = I(data$path$intersectCol))
-    p <- p + geom_rect(aes_(xmin = ~x - 0.25, xmax = ~x + 0.25,
-                           ymin = ~y - 0.25, ymax = ~y + 0.25),
-                       data = data$circles, fill = I(data$circles$intersectCol))
     p <- p + geom_rect(aes_(xmin = ~y - 0.5, xmax = ~y + 0.5, ymin = ~x - 0.5,
                            ymax = ~x + 0.5),
                        data = data$circles, fill = I(data$circles$unionCol))
     p <- p + geom_path(aes_(x = ~y, y = ~x, group = ~group), data = data$path,
                        color = I('white'))
+    p <- p + geom_polygon(aes_(x = ~x, y = ~y, group = ~group),
+                          data = data$path, fill = I(data$path$intersectCol))
+    p <- p + geom_rect(aes_(xmin = ~x - 0.25, xmax = ~x + 0.25,
+                            ymin = ~y - 0.25, ymax = ~y + 0.25),
+                       data = data$circles, fill = I(data$circles$intersectCol))
     p <- p + scale_x_continuous(expand = c(0, 0), breaks = data$labels$x,
                                 labels = data$labels$label)
     p <- p + scale_y_continuous(expand = c(0, 0), breaks = data$labels$x,

@@ -15,7 +15,7 @@ formatted as a ngCMatrix
 }
 \description{
 This function is intended to ensure proper formatting of the supplied sets to
-the \code{\link{create_hierarchy}} constructor. Support for other input
+the \code{\link[=create_hierarchy]{create_hierarchy()}} constructor. Support for other input
 objects can be created by writting a format_sets method for the class.
 }
 \examples{
@@ -24,4 +24,3 @@ format_sets(as.matrix(twitter))
 
 }
 \keyword{internal}
-

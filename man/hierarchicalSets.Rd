@@ -9,7 +9,7 @@
 This package provides a framework for investigating large scale set data with
 the use of hierarchical clustering. While hierarchical clustering has been
 employed on set data numerous times, by converting the presence/absence
-matrix to a distance matrix and using \code{\link[stats]{hclust}}, this
+matrix to a distance matrix and using \code{\link[stats:hclust]{stats::hclust()}}, this
 approach completely removes any notion of underlying set structure from the
 data. hierarchicalSets instead performs a clustering directly using set
 algebra by continuously merging sets with the largest intersection (for ties
@@ -19,7 +19,6 @@ intersectionStack plot is a scalable pendant to Venn diagrams (showing the
 same information but using a different visual mapping).
 }
 \seealso{
-\code{\link{create_hierarchy}} For constructing HierarchicalSet
-object and \code{\link{plot.HierarchicalSet}} for visualization apporaches.
+\code{\link[=create_hierarchy]{create_hierarchy()}} For constructing HierarchicalSet
+object and \code{\link[=plot.HierarchicalSet]{plot.HierarchicalSet()}} for visualization apporaches.
 }
-

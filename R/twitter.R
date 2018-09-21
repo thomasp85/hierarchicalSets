@@ -7,6 +7,6 @@
 #' @format
 #' A ngCMatrix with the sets (users) as columns and elements (followers) as rows
 #'
-#' @source \url{https://snap.stanford.edu/data/}
+#' @source <https://snap.stanford.edu/data/>
 #'
 'twitter'

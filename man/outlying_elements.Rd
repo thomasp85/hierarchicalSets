@@ -42,7 +42,6 @@ head(elemOut)
 
 }
 \seealso{
-\code{\link{plot_outlier_distribution}} for plotting the
+\code{\link[=plot_outlier_distribution]{plot_outlier_distribution()}} for plotting the
 distribution  of outlying elements in a HierarchicalSet object
 }
-

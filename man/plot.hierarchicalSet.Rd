@@ -5,9 +5,10 @@
 \title{Visualize hierarchical sets}
 \usage{
 \method{plot}{HierarchicalSet}(x, label = TRUE, type = "dendrogram",
-  transform = NULL, style = theme_bw(), quantiles = 0, upperBound = 1,
-  tension = 0.8, alpha = 1, circular = TRUE, showHierarchy = !circular,
-  evenHierarchy = circular, outliers = NULL, ratio = NULL, n = 50, ...)
+  transform = NULL, style = theme_bw(), quantiles = 0,
+  upperBound = 1, tension = 0.8, alpha = 1, circular = TRUE,
+  showHierarchy = !circular, evenHierarchy = circular,
+  outliers = NULL, ratio = NULL, n = 50, ...)
 }
 \arguments{
 \item{x}{A HierarchicalSet object to plot.}
@@ -18,7 +19,7 @@
 be abbreviated.}
 
 \item{transform}{A string giving the scale transformation or a
-\code{\link[scales]{trans}} object.}
+\code{\link[scales:trans]{scales::trans()}} object.}
 
 \item{style}{A ggplot2 theme to use as basis for the plot. Defaults to
 theme_bw().}
@@ -47,7 +48,7 @@ to the left (for linear) of the edge bundles.}
 constructing the edge bundles be evened out.}
 
 \item{outliers}{A precomputed data.frame with outlier information, as
-returned by \code{\link{outlying_elements}}.}
+returned by \code{\link[=outlying_elements]{outlying_elements()}}.}
 
 \item{ratio}{Should outliers be plotted as a ratio instead of the raw number.
 If \code{NULL} the raw number is used, If \code{"min"} the raw number is
@@ -75,27 +76,26 @@ change scales etc. on the result of \code{plot()}.
 Currently 4 different plottypes are available:
 
 \describe{
-  \item{\strong{dendrogram}}{Plots a horizontal dendrogram with the x-value
-  mapped to the intersection size divided by the union size. This plot very
-  clearly shows the rise in heterogenity as more and more sets are joined,
-  and clearly shows clusters of very similar sets.}
-  \item{\strong{intersectStack}}{Plots a bottom-up icicleplot with height
-  showing the size of the intersection. In essence this plot communicates the
-  same type of information as a Venn-diagram, but in a scalable way and only
-  showing the intersections along the hierarchy. Box color maps to the degree
-  (number of sets) of the intersection making high-degree high-intersection
-  as well as low-degree low-intersection boxes stand out.}
-  \item{\strong{heatmap}}{Plots a traditional heatmap showing all 2-degree
-  intersections. The sets are organized according to the hierarchy so the
-  result should show a number of squares along the diagonal. If two very
-  similar sets have been forced apart by the clustering, this will show up
-  nicely as high value squares away from the diagonal.}
-  \item{\strong{composite}}{Combines dendrogram, intersectStack and heatmap
-  into a composite plot.}
-  \item{\strong{outlyingElements}}{Plots intersects between two sets that are
-  missing from the intersect of their shared top node as hierarchical edge
-  bundles. It helps detect deviations from the global structure as defined
-  by the hierarchcial clustering.}
+\item{\strong{dendrogram}}{Plots a horizontal dendrogram with the x-value
+mapped to the intersection size divided by the union size. This plot very
+clearly shows the rise in heterogenity as more and more sets are joined,
+and clearly shows clusters of very similar sets.}
+\item{\strong{intersectStack}}{Plots a bottom-up icicleplot with height
+showing the size of the intersection. In essence this plot communicates the
+same type of information as a Venn-diagram, but in a scalable way and only
+showing the intersections along the hierarchy. Box color maps to the degree
+(number of sets) of the intersection making high-degree high-intersection
+as well as low-degree low-intersection boxes stand out.}
+\item{\strong{heatmap}}{Plots a traditional heatmap showing all 2-degree
+intersections. The sets are organized according to the hierarchy so the
+result should show a number of squares along the diagonal. If two very
+similar sets have been forced apart by the clustering, this will show up
+nicely as high value squares away from the diagonal.}
+\item{\strong{composite}}{Combines dendrogram, intersectStack and heatmap
+into a composite plot.}
+\item{\strong{outlyingElements}}{Plots intersects between two sets that are
+missing from the intersect of their shared top node as hierarchical edge
+bundles. It helps detect deviations from the global structure as defined
+by the hierarchcial clustering.}
 }
 }
-

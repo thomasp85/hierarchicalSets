@@ -4,7 +4,7 @@
 
 #' Create and store hierarchcical sets
 #'
-#' HierarchicalSet object can be created using the \code{hSet()} constructor.
+#' HierarchicalSet object can be created using the `hSet()` constructor.
 #' The resulting object will contain both the underlying sets as well as the
 #' resulting clustering.
 #'
@@ -14,20 +14,20 @@
 #'
 #' @param intersectLimit The proportion of sets an element must be present in to
 #' be considered part of the intersect. Standard intersects require it to be
-#' present in all sets (intersectLimit = 1), which is also the default
+#' present in all sets (`intersectLimit = 1`), which is also the default
 #'
 #' @return An object of class HierarchicalSet
 #'
 #' @details
 #' The HierarchicalSet class contains both the clustering and the original sets.
 #' The former is stored in a list of dendrogram objects in and the latter as a
-#' presence/absence matrix. Both are retrivable using \code{$clusters} and
-#' \code{$sets} respectively. Furthermore individual dendrograms can be
-#' extracted directly using the \code{[[} operator. If multiple independent
-#' clusters exists the object can be subsetted using the \code{[} operator.
+#' presence/absence matrix. Both are retrivable using `$clusters` and
+#' `$sets` respectively. Furthermore individual dendrograms can be
+#' extracted directly using the `[[` operator. If multiple independent
+#' clusters exists the object can be subsetted using the `[` operator.
 #'
 #' For plotting functionality see the separate plot documentation for
-#' \code{\link{plot.HierarchicalSet}}.
+#' [plot.HierarchicalSet()].
 #'
 #' @aliases HierarchicalSet
 #'
@@ -84,9 +84,9 @@ create_hierarchy <- function(sets, intersectLimit = 1) {
 #' present in all sets (intersectLimit = 1), which is also the default
 #'
 #' @return An object of class HierarchicalSet, based on the outliying elements
-#' of \code{set}
+#' of `set`
 #'
-#' @seealso \code{\link{outlying_elements}} for extracting outlying element
+#' @seealso [outlying_elements()] for extracting outlying element
 #' information from a HierarchicalSet object
 #'
 #' @export
@@ -110,7 +110,7 @@ outlier_hierarchy <- function(set, intersectLimit = 1) {
 #' Parse different set formats into ngCMatrix format
 #'
 #' This function is intended to ensure proper formatting of the supplied sets to
-#' the \code{\link{create_hierarchy}} constructor. Support for other input
+#' the [create_hierarchy()] constructor. Support for other input
 #' objects can be created by writting a format_sets method for the class.
 #'
 #' @param x The sets to be formatted

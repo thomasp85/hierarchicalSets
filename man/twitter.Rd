@@ -17,4 +17,3 @@ dataset is anonymized and based on the ego-Twitter network from Stanford
 Large Network Dataset Collection.
 }
 \keyword{datasets}
-
