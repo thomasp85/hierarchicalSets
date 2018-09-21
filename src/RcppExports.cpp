@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // splinePath
 NumericMatrix splinePath(NumericVector x, NumericVector y, int degree, std::vector<double> knots, int detail);
-RcppExport SEXP hierarchicalSets_splinePath(SEXP xSEXP, SEXP ySEXP, SEXP degreeSEXP, SEXP knotsSEXP, SEXP detailSEXP) {
+RcppExport SEXP _hierarchicalSets_splinePath(SEXP xSEXP, SEXP ySEXP, SEXP degreeSEXP, SEXP knotsSEXP, SEXP detailSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -22,7 +22,7 @@ END_RCPP
 }
 // getSplines
 List getSplines(NumericVector x, NumericVector y, IntegerVector id, int detail);
-RcppExport SEXP hierarchicalSets_getSplines(SEXP xSEXP, SEXP ySEXP, SEXP idSEXP, SEXP detailSEXP) {
+RcppExport SEXP _hierarchicalSets_getSplines(SEXP xSEXP, SEXP ySEXP, SEXP idSEXP, SEXP detailSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -36,7 +36,7 @@ END_RCPP
 }
 // setClustering
 List setClustering(IntegerVector P, IntegerVector I, CharacterVector setNames, double threshold);
-RcppExport SEXP hierarchicalSets_setClustering(SEXP PSEXP, SEXP ISEXP, SEXP setNamesSEXP, SEXP thresholdSEXP) {
+RcppExport SEXP _hierarchicalSets_setClustering(SEXP PSEXP, SEXP ISEXP, SEXP setNamesSEXP, SEXP thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -50,7 +50,7 @@ END_RCPP
 }
 // pairSummary
 DataFrame pairSummary(IntegerVector P, IntegerVector I, IntegerVector order);
-RcppExport SEXP hierarchicalSets_pairSummary(SEXP PSEXP, SEXP ISEXP, SEXP orderSEXP) {
+RcppExport SEXP _hierarchicalSets_pairSummary(SEXP PSEXP, SEXP ISEXP, SEXP orderSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -63,7 +63,7 @@ END_RCPP
 }
 // getOutliers
 List getOutliers(List clusters, IntegerVector P, IntegerVector I, bool count);
-RcppExport SEXP hierarchicalSets_getOutliers(SEXP clustersSEXP, SEXP PSEXP, SEXP ISEXP, SEXP countSEXP) {
+RcppExport SEXP _hierarchicalSets_getOutliers(SEXP clustersSEXP, SEXP PSEXP, SEXP ISEXP, SEXP countSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -74,4 +74,18 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(getOutliers(clusters, P, I, count));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_hierarchicalSets_splinePath", (DL_FUNC) &_hierarchicalSets_splinePath, 5},
+    {"_hierarchicalSets_getSplines", (DL_FUNC) &_hierarchicalSets_getSplines, 4},
+    {"_hierarchicalSets_setClustering", (DL_FUNC) &_hierarchicalSets_setClustering, 4},
+    {"_hierarchicalSets_pairSummary", (DL_FUNC) &_hierarchicalSets_pairSummary, 3},
+    {"_hierarchicalSets_getOutliers", (DL_FUNC) &_hierarchicalSets_getOutliers, 4},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_hierarchicalSets(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }
