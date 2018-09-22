@@ -72,28 +72,9 @@ While it is expected that followers share some of the same patterns in terms of 
 
 ``` r
 plot(twitSet, type = 'outlyingElements', quantiles = 0.8, alpha = 0.2)
-#> TableGrob (12 x 11) "layout": 19 grobs
-#>     z         cells       name                                        grob
-#> 1   0 ( 1-12, 1-11) background             rect[plot.background..rect.185]
-#> 2   5 ( 6- 6, 4- 4)     spacer                              zeroGrob[NULL]
-#> 3   7 ( 7- 7, 4- 4)     axis-l         absoluteGrob[GRID.absoluteGrob.166]
-#> 4   3 ( 8- 8, 4- 4)     spacer                              zeroGrob[NULL]
-#> 5   6 ( 6- 6, 5- 5)     axis-t                              zeroGrob[NULL]
-#> 6   1 ( 7- 7, 5- 5)      panel                    gTree[panel-1.gTree.158]
-#> 7   9 ( 8- 8, 5- 5)     axis-b         absoluteGrob[GRID.absoluteGrob.162]
-#> 8   4 ( 6- 6, 6- 6)     spacer                              zeroGrob[NULL]
-#> 9   8 ( 7- 7, 6- 6)     axis-r                              zeroGrob[NULL]
-#> 10  2 ( 8- 8, 6- 6)     spacer                              zeroGrob[NULL]
-#> 11 10 ( 5- 5, 5- 5)     xlab-t                              zeroGrob[NULL]
-#> 12 11 ( 9- 9, 5- 5)     xlab-b zeroGrob[axis.title.x.bottom..zeroGrob.167]
-#> 13 12 ( 7- 7, 3- 3)     ylab-l   zeroGrob[axis.title.y.left..zeroGrob.168]
-#> 14 13 ( 7- 7, 7- 7)     ylab-r                              zeroGrob[NULL]
-#> 15 14 ( 7- 7, 9- 9)  guide-box                           gtable[guide-box]
-#> 16 15 ( 4- 4, 5- 5)   subtitle       zeroGrob[plot.subtitle..zeroGrob.181]
-#> 17 16 ( 3- 3, 5- 5)      title          zeroGrob[plot.title..zeroGrob.180]
-#> 18 17 (10-10, 5- 5)    caption        zeroGrob[plot.caption..zeroGrob.183]
-#> 19 18 ( 2- 2, 2- 2)        tag            zeroGrob[plot.tag..zeroGrob.182]
 ```
+
+![](man/figures/README-unnamed-chunk-6-1.png)
 
 It seems our four sets again draws attention to themselves by having strong connections to a range of other sets distant in terms of the clustering. Also it is obvious that there is two seperate groups of sets in terms of their deviation profile. There might be a secondary structure hidden within the outlying elements. Lets create a hierarchical set clustering based only on the outlying elements:
 
