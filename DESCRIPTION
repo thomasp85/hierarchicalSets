@@ -31,10 +31,12 @@ Imports:
     grDevices,
     methods,
     utils,
-    viridis
+    viridis,
+    patchwork
 RoxygenNote: 6.1.0
 Collate:
     'RcppExports.R'
+    'geom_rect2.R'
     'hSet.R'
     'hierarchicalSet.R'
     'hierarchicalSets-package.R'
@@ -42,3 +44,4 @@ Collate:
     'visuals.R'
 LinkingTo: Rcpp
 Roxygen: list(markdown = TRUE)
+Remotes: thomasp85/patchwork

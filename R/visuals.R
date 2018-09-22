@@ -156,9 +156,10 @@ plot.HierarchicalSet <- function(x, label = TRUE, type = 'dendrogram',
                                               showHierarchy, alpha, ...),
         stop('Unknown plot type')
     )
-    grid.newpage()
-    grid.draw(p)
-    invisible(p)
+    # grid.newpage()
+    # grid.draw(p)
+    # invisible(p)
+    p
 }
 #' Plot the outlying elements of a HierarchicalSet object
 #'
@@ -287,7 +288,7 @@ outlying_elements <- function(x, counts = TRUE) {
 #'
 #' @noRd
 #'
-createDenTable <- function(data, style, label = TRUE, transform = NULL) {
+createDenTable <- function(data, style, label = TRUE, transform = NULL, xaxis = 'bottom') {
     p <- ggplot()
     p <- p + style
     p <- p + theme(
@@ -309,7 +310,7 @@ createDenTable <- function(data, style, label = TRUE, transform = NULL) {
     }
     p <- p + xlab(expression(paste(lambda, "'") ~~ italic("heterogeneity")))
     p <- p + scale_x_continuous(trans = transReverser(transform),
-                                expand = c(0, 0))
+                                expand = c(0, 0), position = xaxis)
     p <- p + scale_y_continuous(breaks = data$labels$x,
                                 labels = data$labels$label, expand = c(0,0.5),
                                 limits = c(1, max(data$labels$x)),
@@ -317,7 +318,7 @@ createDenTable <- function(data, style, label = TRUE, transform = NULL) {
     p <- p + geom_segment(aes_(y = ~x, x = ~y, yend = ~xend, xend = ~yend),
                           data = data$segments, lineend = 'round')
     p <- p + expand_limits(x = c(0, max(data$segments$y)*1.025))
-    ggplotGrob(p)
+    p
 }
 #' Based on createIceData create a gtable
 #'
@@ -406,71 +407,68 @@ createIceTable <- function(data, style, label = TRUE, yaxis = 'left',
         p <- p + ylab(expression(group('|', intersect(), '|')))
     }
 
-    ggplotGrob(p)
+    p
 }
 #' @importFrom gtable gtable_width
-createHeatTable <- function(data, style, label = TRUE, transform = NULL) {
+createHeatTable <- function(data, style, label = TRUE, transform = NULL, yaxis = 'left', xaxis = 'bottom') {
     p <- ggplot() + style + theme(
         axis.title = element_blank(),
-        axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+        axis.text.x.bottom = element_text(
+            angle = if (yaxis == 'left') 45 else 315,
+            hjust = if (yaxis == 'left') 1 else 0,
+            vjust = 1
+        ),
+        axis.text.x.top = element_text(
+            angle = if (yaxis != 'left') 45 else 315,
+            hjust = if (yaxis == 'left') 1 else 0,
+            vjust = 0
+        ),
         axis.line = element_blank(),
         panel.border = element_blank()
     )
-    if (!label) {
+    if (is.logical(label)) {
+        if (!label) {
+            p <- p + theme(
+                axis.text = element_blank(),
+                axis.ticks = element_blank()
+            )
+        }
+    } else if (!'x' %in% label) {
         p <- p + theme(
-            axis.text = element_blank(),
-            axis.ticks = element_blank()
+            axis.text.x = element_blank(),
+            axis.ticks.x = element_blank()
+        )
+    } else if (!'y' %in% label) {
+        p <- p + theme(
+            axis.text.y = element_blank(),
+            axis.ticks.y = element_blank()
         )
     }
     if (is.null(transform)) {
         transform <- 'identity'
     }
-    intersectScale <- scale_color_distiller('Intersect\nsize',
-                                            trans = transform,
-                                            palette = 'Blues',
-                                            guide = 'colorbar',
-                                            direction = 1)
-    val <- unique(c(data$path$intersect, data$circles$intersect))
-    intersectScale$range$train(range(val))
-    pal <- intersectScale$palette(intersectScale$rescaler(val))
-    data$path$intersectCol <- pal[match(data$path$intersect, val)]
-    data$circles$intersectCol <- pal[match(data$circles$intersect, val)]
-    unionScale <- scale_fill_distiller('Union\nsize', trans = transform,
-                                       palette = 'Purples', guide = 'colorbar',
-                                       direction = 1)
-    val <- unique(data$circles$union)
-    unionScale$range$train(range(val))
-    pal <- unionScale$palette(unionScale$rescaler(val))
-    data$circles$unionCol <- pal[match(data$circles$union, val)]
 
-    p <- p + geom_tile(aes(x = 1, y = 1, fill = 1), alpha = 0)
-    p <- p + geom_path(aes(x = 1:2, y = 1:2, colour = c(1, 1), group = c(1,1)), alpha = 0)
-    p <- p + geom_rect(aes_(xmin = ~y - 0.5, xmax = ~y + 0.5, ymin = ~x - 0.5,
-                           ymax = ~x + 0.5),
-                       data = data$circles, fill = I(data$circles$unionCol))
-    p <- p + geom_path(aes_(x = ~y, y = ~x, group = ~group), data = data$path,
+    p <- p + geom_rect2(aes(xmin = y - 0.5, xmax = y + 0.5, ymin = x - 0.5,
+                            ymax = x + 0.5, colour = union), data = data$circles, fill = NA)
+    p <- p + geom_path(aes(x = y, y = x, group = group), data = data$path,
                        color = I('white'))
-    p <- p + geom_polygon(aes_(x = ~x, y = ~y, group = ~group),
-                          data = data$path, fill = I(data$path$intersectCol))
-    p <- p + geom_rect(aes_(xmin = ~x - 0.25, xmax = ~x + 0.25,
-                            ymin = ~y - 0.25, ymax = ~y + 0.25),
-                       data = data$circles, fill = I(data$circles$intersectCol))
+    p <- p + geom_polygon(aes(x = x, y = y, group = group, fill = intersect),
+                          data = data$path)
+    p <- p + geom_rect(aes(xmin = x - 0.25, xmax = x + 0.25,
+                            ymin = y - 0.25, ymax = y + 0.25, fill = intersect),
+                       data = data$circles)
     p <- p + scale_x_continuous(expand = c(0, 0), breaks = data$labels$x,
-                                labels = data$labels$label)
+                                labels = data$labels$label, position = xaxis)
     p <- p + scale_y_continuous(expand = c(0, 0), breaks = data$labels$x,
-                                labels = data$labels$label)
-
-    customScales <- ggplot2:::scales_list()
-    customScales$add(intersectScale)
-    customScales$add(unionScale)
-    guides <- ggplot2:::build_guides(
-        customScales, p$layers, p$mapping, 'right', p$theme, p$guides, p$labels
-    )
-
-    p <- ggplotGrob(p)
-    guide_pos <- which(p$layout$name == 'guide-box')
-    p$grobs[[guide_pos]] <- guides
-    p$widths[p$layout$l[guide_pos]] <- gtable_width(guides)
+                                labels = data$labels$label, position = yaxis)
+    p <- p + scale_fill_distiller('Intersect\nsize',
+                                   trans = transform,
+                                   palette = 'Blues',
+                                   guide = 'colorbar',
+                                   direction = 1)
+    p <- p + scale_colour_distiller('Union\nsize', trans = transform,
+                                  palette = 'Purples', guide = 'colorbar',
+                                  direction = 1)
     p
 }
 createBarTable <- function(data, style, label = TRUE, yaxis = 'left',
@@ -504,87 +502,30 @@ createBarTable <- function(data, style, label = TRUE, yaxis = 'left',
     p <- p + scale_x_continuous(expand = c(0, 0), breaks = data$x,
                                 labels = data$label)
 
-    ggplotGrob(p)
+    p
 }
 #' @importFrom gtable gtable gtable_add_grob
 #' @importFrom grid unit.c nullGrob
+#' @importFrom patchwork plot_spacer plot_layout plot_annotation
 createCompositeTable <- function(den, ice, heat, bar, style, label, transform) {
-    den <- createDenTable(den, style = style, label = label,
-                          transform = transform$dendrogram)
-    ice <- createIceTable(ice, style = style, label = label, yaxis = 'right',
+    style2 <- style + theme(plot.margin = margin(0,0,0,0))
+    den <- createDenTable(den, style = style2, label = FALSE,
+                          transform = transform$dendrogram, xaxis = 'top')
+    ice <- createIceTable(ice, style = style2, label = FALSE, yaxis = 'right',
                           transform = transform$intersectStack)
-    heat <- createHeatTable(heat, style = style, label = FALSE,
-                            transform = transform$heatmap)
-    bar <- createBarTable(bar, style = style, label = FALSE, yaxis = 'right',
+    heat <- createHeatTable(heat, style = style2, label = label, yaxis = 'right',
+                            xaxis = 'top', transform = transform$heatmap)
+    bar <- createBarTable(bar, style = style2, label = FALSE, yaxis = 'right',
                           transform = transform$bar)
 
-    legends <- gtable(
-        widths = unit.c(unit(1, 'null'), heat$widths[8], unit(0.5, 'cm'),
-                        heat$widths[8], unit(0.5, 'cm'), ice$widths[8],
-                        unit(1, 'null')),
-        heights = unit.c(den$heights[7:8], unit(1, 'null'))
-    )
-    legends <- gtable_add_grob(
-        legends,
-        grobs = list(
-            den$grobs[[7]],
-            den$grobs[[12]],
-            heat$grobs[[15]]$grobs[[1]],
-            heat$grobs[[15]]$grobs[[2]],
-            ice$grobs[[15]]$grobs[[1]]
-        ),
-        t = c(1, 2, 3, 3, 3),
-        l = c(1, 1, 2, 4, 6),
-        r = c(7 ,7, 2, 4, 6),
-        clip = 'off'
-    )
-    widths <- unit.c(
-        unit(0.5, 'lines'),
-        unit(1, 'null'),
-        unit(1, 'null'),
-        max(ice$widths[5], bar$widths[5]),
-        max(ice$widths[6], bar$widths[6]),
-        if (label) den$widths[5] else unit(1, 'lines')
-    )
-    heights <- unit.c(
-        unit(1, 'lines'),
-        unit(0.25, 'null'),
-        unit(0.25, 'lines'),
-        unit(1, 'null'),
-        unit(1, 'null'),
-        if (label) ice$heights[7] else unit(0, 'lines'),
-        unit(1, 'lines')
-    )
-    p <- gtable(widths, heights)
-    p <- gtable_add_grob(
-        p,
-        grobs = list(
-            den$grobs[[1]],
-            den$grobs[[6]],
-            bar$grobs[[6]],
-            heat$grobs[[6]],
-            ice$grobs[[6]]
-        ),
-        t = c(1, 4, 2, 4, 5),
-        l = c(1, 2, 3, 3, 3),
-        b = c(length(heights), 4, 2, 4, 5),
-        r = c(length(widths), 2, 3, 3, 3)
-    )
-    gtable_add_grob(
-        p,
-        grobs = list(
-            legends,
-            bar$grobs[[9]],
-            bar$grobs[[14]],
-            if (label) den$grobs[[9]] else nullGrob(),
-            ice$grobs[[9]],
-            ice$grobs[[14]],
-            if (label) ice$grobs[[7]] else nullGrob()
-        ),
-        t = c(5, 2, 2, 4, 5, 5, 6),
-        l = c(2, 4, 5, 4, 4, 5, 3),
-        clip = 'off'
-    )
+    den +
+        heat +
+        plot_spacer() +
+        bar +
+        plot_spacer() +
+        ice +
+        plot_layout(ncol = 2, heights = c(4, 1, 4)) +
+        plot_annotation(theme = style)
 }
 #' @importFrom gtable gtable_add_rows gtable_add_cols
 #' @importFrom RColorBrewer brewer.pal
@@ -639,7 +580,7 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy, alph
             nColumns <- 1
             p <- p + expand_limits(x = c(-1, 1), y = c(-1, 1))
         }
-        p <- p + coord_fixed()
+        p <- p + coord_fixed(clip = 'off')
         if (is.null(data$bundles$ratio)) {
             if (is.null(colorGradient)) colorGradient <- brewer.pal(9, 'YlOrRd')[-(1:2)]
             p <- p + scale_color_gradientn(
@@ -654,7 +595,6 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy, alph
             )
         }
 
-        p <- ggplotGrob(p)
         if ((label && nPanels > 1) || showHierarchy) {
             denP <- ggplot() + style + theme(
                 axis.ticks = element_blank(),
@@ -676,12 +616,8 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy, alph
                 newLim <- c(-1, 1) * maxLength*0.12
                 denP <- denP + expand_limits(x = newLim, y = newLim)
             }
-            denP <- ggplotGrob(denP)
-            insertAt <- length(p$heights) - 2
-            colSpan <- range(p$layout$l[grep('panel', p$layout$name)])
-            p <- gtable_add_rows(p, unit(nColumns, 'null'), insertAt)
-            p <- gtable_add_grob(p, denP$grobs[[4]], t = insertAt + 1,
-                                 l = colSpan[1], r = colSpan[2])
+            p <- p + coord_fixed(clip = 'off')
+            p <- p / denP
         }
     } else {
         p <- ggplot() + style + theme(
@@ -710,7 +646,6 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy, alph
             '# Outlying\nelements',
             colours = brewer.pal(9, 'YlOrRd')[-(1:2)]
         )
-        p <- ggplotGrob(p)
         if (showHierarchy) {
             denP <- ggplot() + style + theme(
                 axis.ticks = element_blank(),
@@ -727,9 +662,7 @@ createOutlierTable <- function(data, style, label, circular, showHierarchy, alph
                                         limits = range(data$labels$x))
             denP <- denP + scale_x_reverse(expand = c(0.025, 0))
             denP <- denP + expand_limits(x = c(0, max(data$segments$y)*1.025))
-            denP <- ggplotGrob(denP)
-            p <- gtable_add_cols(p, widths = unit(1, 'null'), 1)
-            p <- gtable_add_grob(p, denP$grobs[[4]], t = 3, l = 2, clip = 'off')
+            p <- denP | p
         }
     }
     p
@@ -1235,3 +1168,4 @@ getAxisTextSize <- function(theme, which = 'x') {
     }
     size
 }
+`%||%` <- function(l, r) if (is.null(l)) r else l
