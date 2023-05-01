@@ -3,7 +3,6 @@
 \docType{package}
 \name{hierarchicalSets}
 \alias{hierarchicalSets}
-\alias{hierarchicalSets-package}
 \title{Hierarchical analysis and visualization of set data}
 \description{
 This package provides a framework for investigating large scale set data with

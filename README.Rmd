@@ -14,7 +14,10 @@ knitr::opts_chunk$set(
 
 # hierarchicalSets
 
-[![Travis-CI Build Status](https://travis-ci.org/thomasp85/hierarchicalSets.svg?branch=master)](https://travis-ci.org/thomasp85/hierarchicalSets) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/thomasp85/hierarchicalSets?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/hierarchicalSets) [![CRAN\_Release\_Badge](http://www.r-pkg.org/badges/version-ago/hierarchicalSets)](https://CRAN.R-project.org/package=hierarchicalSets) [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/hierarchicalSets)](https://CRAN.R-project.org/package=hierarchicalSets)
+<!-- badges: start -->
+[![CRAN\_Release\_Badge](http://www.r-pkg.org/badges/version-ago/hierarchicalSets)](https://CRAN.R-project.org/package=hierarchicalSets) [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/hierarchicalSets)](https://CRAN.R-project.org/package=hierarchicalSets)
+[![R-CMD-check](https://github.com/thomasp85/hierarchicalSets/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thomasp85/hierarchicalSets/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 ## What is this?
 This is a package that facilitates hierarchical set analysis on large 

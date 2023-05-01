@@ -78,48 +78,48 @@ resulting clustering.
 \details{
 The HierarchicalSet class contains both the clustering and the original sets.
 The former is stored in a list of dendrogram objects in and the latter as a
-presence/absence matrix. Both are retrivable using \code{$clusters} and
-\code{$sets} respectively. Furthermore individual dendrograms can be
+presence/absence matrix. Both are retrivable using \verb{$clusters} and
+\verb{$sets} respectively. Furthermore individual dendrograms can be
 extracted directly using the \code{[[} operator. If multiple independent
 clusters exists the object can be subsetted using the \code{[} operator.
 
 For plotting functionality see the separate plot documentation for
 \code{\link[=plot.HierarchicalSet]{plot.HierarchicalSet()}}.
 }
-\section{Methods (by generic)}{
+\section{Functions}{
 \itemize{
-\item \code{print}: Print method for HierarchicalSet objects
+\item \code{print(HierarchicalSet)}: Print method for HierarchicalSet objects
 
 \item \code{[[}: Extract dendrogram objects from HierarchicalSet objects
 
 \item \code{[}: Subset HierarchicalSet object by dendrogram (preserving set
 information and class)
 
-\item \code{sets}: Extract the sets as a sparse matrix
+\item \code{sets(HierarchicalSet)}: Extract the sets as a sparse matrix
 
-\item \code{clusters}: Extract the clusters as a list of dendrograms
+\item \code{clusters(HierarchicalSet)}: Extract the clusters as a list of dendrograms
 
-\item \code{set_names}: Get the names of the sets
+\item \code{set_names(HierarchicalSet)}: Get the names of the sets
 
-\item \code{element_names}: Get the names of the elements
+\item \code{element_names(HierarchicalSet)}: Get the names of the elements
 
-\item \code{n_sets}: Get the number of sets
+\item \code{n_sets(HierarchicalSet)}: Get the number of sets
 
-\item \code{length}: Get the number of sets
+\item \code{length(HierarchicalSet)}: Get the number of sets
 
-\item \code{n_elements}: Get the number of elements
+\item \code{n_elements(HierarchicalSet)}: Get the number of elements
 
-\item \code{n_clusters}: Get the number of clusters
+\item \code{n_clusters(HierarchicalSet)}: Get the number of clusters
 
-\item \code{cluster_sizes}: Get the size of each clusters
+\item \code{cluster_sizes(HierarchicalSet)}: Get the size of each clusters
 
-\item \code{set_sizes}: Get the size of each set
+\item \code{set_sizes(HierarchicalSet)}: Get the size of each set
 
-\item \code{cluster_members}: Get the members of each clusters
+\item \code{cluster_members(HierarchicalSet)}: Get the members of each clusters
 
-\item \code{set_membership}: Get the membership of each set
+\item \code{set_membership(HierarchicalSet)}: Get the membership of each set
+
 }}
-
 \examples{
 data('twitter')
 

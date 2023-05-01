@@ -4,11 +4,24 @@
 \alias{plot.HierarchicalSet}
 \title{Visualize hierarchical sets}
 \usage{
-\method{plot}{HierarchicalSet}(x, label = TRUE, type = "dendrogram",
-  transform = NULL, style = theme_bw(), quantiles = 0,
-  upperBound = 1, tension = 0.8, alpha = 1, circular = TRUE,
-  showHierarchy = !circular, evenHierarchy = circular,
-  outliers = NULL, ratio = NULL, n = 50, ...)
+\method{plot}{HierarchicalSet}(
+  x,
+  label = TRUE,
+  type = "dendrogram",
+  transform = NULL,
+  style = theme_bw(),
+  quantiles = 0,
+  upperBound = 1,
+  tension = 0.8,
+  alpha = 1,
+  circular = TRUE,
+  showHierarchy = !circular,
+  evenHierarchy = circular,
+  outliers = NULL,
+  ratio = NULL,
+  n = 50,
+  ...
+)
 }
 \arguments{
 \item{x}{A HierarchicalSet object to plot.}
@@ -19,7 +32,7 @@
 be abbreviated.}
 
 \item{transform}{A string giving the scale transformation or a
-\code{\link[scales:trans]{scales::trans()}} object.}
+\code{\link[scales:trans_new]{scales::trans()}} object.}
 
 \item{style}{A ggplot2 theme to use as basis for the plot. Defaults to
 theme_bw().}

@@ -24,3 +24,9 @@
 #' @import ggplot2
 #'
 NULL
+
+globalVariables(c(
+    "x",
+    "y",
+    "group"
+))

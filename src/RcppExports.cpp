@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // splinePath
 NumericMatrix splinePath(NumericVector x, NumericVector y, int degree, std::vector<double> knots, int detail);
 RcppExport SEXP _hierarchicalSets_splinePath(SEXP xSEXP, SEXP ySEXP, SEXP degreeSEXP, SEXP knotsSEXP, SEXP detailSEXP) {

@@ -182,7 +182,7 @@ format_sets.matrix <- function(x) {
     if (is.null(colnames(x))) {
         colnames(x) <- paste0('Set ', seq_len(ncol(x)))
     }
-    as(Matrix(x, sparse = TRUE), 'ngCMatrix')
+    as(Matrix(x, sparse = TRUE), 'nsparseMatrix')
 }
 #' @importFrom methods as
 #'
@@ -192,5 +192,5 @@ format_sets.Matrix <- function(x) {
     if (is.null(colnames(x))) {
         colnames(x) <- paste0('Set ', seq_len(ncol(x)))
     }
-    as(x, 'ngCMatrix')
+    as(x, 'nsparseMatrix')
 }
