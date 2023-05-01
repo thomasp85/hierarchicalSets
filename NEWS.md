@@ -1,3 +1,5 @@
+# hierarchicalSets (development version)
+
 # hierarchicalSets 1.0.4
 
 * Fix use of deprecated functionality from Matrix
