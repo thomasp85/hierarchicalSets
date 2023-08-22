@@ -15,14 +15,15 @@
 #' @seealso [create_hierarchy()] For constructing HierarchicalSet
 #' object and [plot.HierarchicalSet()] for visualization apporaches.
 #'
-#' @docType package
+#' @keywords internal
 #'
-#' @name hierarchicalSets
-#'
-#' @useDynLib hierarchicalSets
+"_PACKAGE"
+
+## usethis namespace: start
+#' @useDynLib hierarchicalSets, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @import ggplot2
-#'
+## usethis namespace: end
 NULL
 
 globalVariables(c(
