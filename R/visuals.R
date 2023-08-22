@@ -399,7 +399,7 @@ createIceTable <- function(data, style, label = TRUE, yaxis = 'left',
         colours = rev(brewer.pal(9, 'Greens')[-(1:2)]),
         trans = 'log10',
         breaks = axisTicks(log10(range(data$rectangles$degree)), log = TRUE),
-        guide = guide_colorbar(override.aes = list(size = 0))
+        guide = guide_colorbar(override.aes = list(size = 0, linewidth = 0))
     )
     if (showHierarchy) {
         p <- p + ylab('Size')

@@ -2,22 +2,22 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 splinePath <- function(x, y, degree, knots, detail) {
-    .Call('_hierarchicalSets_splinePath', PACKAGE = 'hierarchicalSets', x, y, degree, knots, detail)
+    .Call(`_hierarchicalSets_splinePath`, x, y, degree, knots, detail)
 }
 
 getSplines <- function(x, y, id, detail) {
-    .Call('_hierarchicalSets_getSplines', PACKAGE = 'hierarchicalSets', x, y, id, detail)
+    .Call(`_hierarchicalSets_getSplines`, x, y, id, detail)
 }
 
 setClustering <- function(P, I, setNames, threshold) {
-    .Call('_hierarchicalSets_setClustering', PACKAGE = 'hierarchicalSets', P, I, setNames, threshold)
+    .Call(`_hierarchicalSets_setClustering`, P, I, setNames, threshold)
 }
 
 pairSummary <- function(P, I, order) {
-    .Call('_hierarchicalSets_pairSummary', PACKAGE = 'hierarchicalSets', P, I, order)
+    .Call(`_hierarchicalSets_pairSummary`, P, I, order)
 }
 
 getOutliers <- function(clusters, P, I, count) {
-    .Call('_hierarchicalSets_getOutliers', PACKAGE = 'hierarchicalSets', clusters, P, I, count)
+    .Call(`_hierarchicalSets_getOutliers`, clusters, P, I, count)
 }
 

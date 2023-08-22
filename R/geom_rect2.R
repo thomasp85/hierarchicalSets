@@ -40,7 +40,7 @@ GeomRect2 <- ggproto('GeomRect2', GeomRect,
                 height = coords$ymax - coords$ymin,
                 default.units = "native",
                 just = c("left", "top"),
-                gp = gpar(col = coords$fill, fill = alpha(coords$colour, coords$alpha), lwd = coords$size * .pt, lty = coords$linetype, lineend = "butt")))
+                gp = gpar(col = coords$fill, fill = alpha(coords$colour, coords$alpha), lwd = coords$linewidth * .pt, lty = coords$linetype, lineend = "butt")))
         }
     }
 )
