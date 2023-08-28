@@ -14,14 +14,12 @@ Description: Pure set data visualization approaches are often limited in
     sets to have a meaningful relational structure.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: TRUE
 Depends:
     R (>= 3.2.0)
 Imports:
     ggdendro,
     ggplot2 (>= 2.2.0),
     stats,
-    Rcpp,
     scales,
     Matrix,
     MASS,
@@ -34,12 +32,14 @@ Imports:
     patchwork
 RoxygenNote: 7.2.3
 Collate:
-    'RcppExports.R'
     'geom_rect2.R'
     'hSet.R'
     'hierarchicalSet.R'
     'hierarchicalSets-package.R'
     'twitter.R'
     'visuals.R'
-LinkingTo: Rcpp
+LinkingTo: 
+    cpp11
 Roxygen: list(markdown = TRUE)
+URL: https://github.com/thomasp85/hierarchicalSets
+BugReports: https://github.com/thomasp85/hierarchicalSets/issues
